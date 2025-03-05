@@ -3,23 +3,30 @@ const THREE = AFRAME.THREE;
 
 AFRAME.registerComponent("gun", {
   init: function () {
-    document.querySelector("a-text")?.setAttribute("value", "inited");
     this.el.addEventListener("triggerdown", this.createBullet.bind(this));
+    document.body.addEventListener("click", this.createBullet.bind(this));
   },
 
   createBullet: function () {
-    document.querySelector("a-text")?.setAttribute("value", "jop");
     try {
       const el = this.el;
 
       const scene = document.querySelector("a-scene")!;
       const position = new THREE.Vector3();
-      const quaternion = new THREE.Quaternion();
+      const direction = new THREE.Quaternion();
       el.object3D.getWorldPosition(position);
-      el.object3D.getWorldQuaternion(quaternion);
+      el.object3D.getWorldQuaternion(direction);
+
+      const gunRotation = new THREE.Quaternion();
+      gunRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 4);
+      direction.multiply(gunRotation);
+
+      const bulletFix = new THREE.Quaternion();
+      bulletFix.setFromAxisAngle(new THREE.Vector3(0, 1, 0), (4.3 / 180.0) * Math.PI);
+      direction.multiply(bulletFix);
 
       const bullet = document.createElement("a-sphere");
-      bullet.setAttribute("bullet", { direction: quaternion });
+      bullet.setAttribute("bullet", { direction });
       bullet.setAttribute("position", position);
       bullet.setAttribute("color", "red");
       bullet.setAttribute("radius", "0.03");

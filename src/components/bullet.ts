@@ -11,7 +11,7 @@ AFRAME.registerComponent("bullet", {
   tick(_time, timeDelta) {
     const bullet = this.el;
 
-    const vector = new THREE.Vector3(0, 0, -timeDelta * 0.001);
+    const vector = new THREE.Vector3(0, 0, -timeDelta * 0.01);
     vector.applyQuaternion(this.data.direction);
 
     const position = bullet.getAttribute("position");
