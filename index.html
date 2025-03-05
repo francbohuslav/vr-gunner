@@ -9,6 +9,18 @@
   <body>
     <a-scene>
       <a-entity environment="preset: forest"></a-entity>
+
+      <!-- Camera + controllers rig -->
+      <a-entity id="camera-rig">
+        <a-camera id="camera" position="0 1.6 0">
+          <a-text position="0 0 -2" value="" color="#FAFAFA" scale="0.3 0.3 0.3"></a-text>
+          <a-cursor color="#FAFAFA"></a-cursor>
+        </a-camera>
+        <a-entity meta-touch-controls="hand: left"></a-entity>
+        <a-entity meta-touch-controls="hand: right" gun></a-entity>
+        <!-- oculus-thumbstick-controls="acceleration: 5" -->
+      </a-entity>
+
       <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
     </a-scene>
     <script type="module" src="/src/main.tsx"></script>
