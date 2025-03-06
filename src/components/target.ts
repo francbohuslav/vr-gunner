@@ -1,13 +1,20 @@
-import AFRAME from "aframe";
+import AFRAME, { Component } from "aframe";
 const THREE = AFRAME.THREE;
 
 const width = 0.5;
 const rounds = 5;
 
+interface TargetComponent extends Component {
+  impactCount: number;
+  startTime: number;
+  setRandomPosition(): void;
+  getTime(): string;
+}
+
 AFRAME.registerComponent("target", {
   schema: {},
 
-  init: function () {
+  init: function (this: TargetComponent) {
     this.el.setAttribute("color", "red");
     this.el.setAttribute("radius", width);
     this.el.setAttribute("metalness", "0.7");
@@ -22,14 +29,14 @@ AFRAME.registerComponent("target", {
     this.el.object3D.position.set(x, y, z);
   },
 
-  detectImpact(bulletPrevPosition, bulletPosition) {
+  detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {
     const line = new THREE.Line3(bulletPrevPosition, bulletPosition);
     const closestPoint = new THREE.Vector3();
     line.closestPointToPoint(this.el.object3D.position, true, closestPoint);
     const distance = closestPoint.distanceTo(this.el.object3D.position);
     // console.log(distance);
 
-    if (distance < width ) {
+    if (distance < width) {
       this.impactCount++;
       let text;
       if (this.impactCount === 0) {
@@ -46,7 +53,7 @@ AFRAME.registerComponent("target", {
     }
   },
 
-  getTime() {
+  getTime(this: TargetComponent) {
     return ((new Date().getTime() - this.startTime) / 1000).toFixed(3);
   },
 });

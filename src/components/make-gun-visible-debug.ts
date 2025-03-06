@@ -5,6 +5,7 @@ AFRAME.registerComponent("make-gun-visible-debug", {
     leftGun: { type: "boolean" },
   },
   init: function () {
+    //@ts-ignore
     if (!AFRAME.utils.device.isOculusBrowser()) {
       if (this.data.leftGun) {
         this.el.setAttribute("position", "-0.1 1.5 -0.3");

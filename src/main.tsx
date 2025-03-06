@@ -7,7 +7,7 @@ import "./components/target.ts";
 import "./components/gun.ts";
 import "./components/meta-thumbstick-controls.ts";
 import "./components/make-gun-visible-debug.ts";
-import "https://unpkg.com/aframe-environment-component@1.5.x/dist/aframe-environment-component.min.js";
+import "aframe-environment-component";
 
 // createRoot(document.getElementById("root")!).render(
 //   <StrictMode>

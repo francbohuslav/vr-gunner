@@ -25,7 +25,9 @@ AFRAME.registerComponent("gun", {
 
       scene.appendChild(bullet);
     } catch (ex) {
-      document.querySelector("a-text")?.setAttribute("value", ex.message);
+      if (ex instanceof Error) {
+        document.querySelector("a-text")?.setAttribute("value", ex.message);
+      }
     }
   },
 

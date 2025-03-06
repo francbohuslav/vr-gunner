@@ -1,3 +1,4 @@
+//@ts-nocheck
 AFRAME.registerComponent("meta-thumbstick-controls", {
   schema: {
     acceleration: { default: 45 },
