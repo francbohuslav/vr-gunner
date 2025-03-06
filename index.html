@@ -9,25 +9,51 @@
   <body>
     <a-scene>
       <a-assets>
+        <img id="gun-texture" src="/assets/gun.jpg" />
         <a-asset-item id="gun-model" src="/assets/gun.obj"></a-asset-item>
       </a-assets>
 
-      <a-entity environment="preset: forest"></a-entity>
+      <a-entity environment="preset: forest; lightPosition: -10 10 10;"></a-entity>
 
       <!-- Camera + controllers rig -->
       <a-entity id="camera-rig">
         <a-camera id="camera" position="0 1.6 0">
-          <a-text position="0 0 -2" value="" color="#FAFAFA" scale="0.3 0.3 0.3"></a-text>
+          <a-text position="0 0.3 -2" value="Zasahni cervenou kouli pro zacatek hry" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
         </a-camera>
-        <a-entity meta-touch-controls="hand: right; model: false" gun>
-          <a-entity position="0.01 -0.01 0.08" rotation="0 96 0 ">
-            <a-entity rotation="0 0 -45" obj-model="obj: #gun-model"  material="src: /assets/gun.jpg" scale="0.0045 0.0045 0.0045"> </a-entity>
+
+        <a-entity make-gun-visible-debug="leftGun: false">
+          <a-entity meta-touch-controls="hand: right; model: false" gun="gunPosition: #right-gun-position">
+            <a-entity rotation="-52 0 0">
+              <a-entity rotation="0 0 -5">
+                <a-entity id="right-gun-position" rotation="0 6 0">
+                  <!-- <a-box id="right-gun-placeholder" width="0.003" height="0.003" depth="0.4" color="red"></a-box> -->
+                  <a-entity position="0 -0.11 0.1">
+                    <a-entity id="right-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045">
+                    </a-entity>
+                  </a-entity>
+                </a-entity>
+              </a-entity>
+            </a-entity>
           </a-entity>
         </a-entity>
-        <!-- oculus-thumbstick-controls="acceleration: 5" -->
       </a-entity>
 
-      <!-- <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere> -->
+      <a-entity make-gun-visible-debug="leftGun: true">
+        <a-entity meta-touch-controls="hand: left; model: false" gun="gunPosition: #left-gun-position">
+          <a-entity rotation="-52 0 0">
+            <a-entity rotation="0 0 -5">
+              <a-entity id="left-gun-position" rotation="0 -6 0">
+                <!-- <a-box id="left-gun-placeholder" width="0.003" height="0.003" depth="0.4" color="red"></a-box> -->
+                <a-entity position="0 -0.11 0.1">
+                  <a-entity id="left-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"> </a-entity>
+                </a-entity>
+              </a-entity>
+            </a-entity>
+          </a-entity>
+        </a-entity>
+      </a-entity>
+
+      <a-sphere id="target" target></a-sphere>
     </a-scene>
     <script type="module" src="/src/main.tsx"></script>
   </body>
