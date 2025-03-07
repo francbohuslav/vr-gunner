@@ -9,6 +9,8 @@ interface TargetComponent extends Component {
   startTime: number;
   setRandomPosition(): void;
   getTime(): string;
+  moveLeft: boolean;
+  moveSpeed: number;
 }
 
 AFRAME.registerComponent("target", {
@@ -22,11 +24,24 @@ AFRAME.registerComponent("target", {
     this.impactCount = -1;
   },
 
-  setRandomPosition() {
+  tick(this: TargetComponent, _time, timeDelta) {
+    // Move around player, preserve distance from ground
+    const pos = this.el.object3D.position;
+    const vector = new THREE.Vector3(pos.x, 0, pos.z);
+    const rotation = new THREE.Quaternion();
+    rotation.setFromAxisAngle(new THREE.Vector3(0, this.moveLeft ? 1 : -1, 0), Math.PI / 2);
+    vector.applyQuaternion(rotation);
+    vector.setLength(timeDelta * this.moveSpeed);
+    this.el.object3D.position.add(vector);
+  },
+
+  setRandomPosition(this: TargetComponent) {
     const z = -(Math.random() * 15 + 5);
     const x = (Math.random() * 15 + 5) * (Math.random() > 0.5 ? 1 : -1);
     const y = Math.random() * 10 + 0.25;
     this.el.object3D.position.set(x, y, z);
+    this.moveLeft = Math.random() > 0.5;
+    this.moveSpeed = Math.random() / 500;
   },
 
   detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {

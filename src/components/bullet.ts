@@ -2,7 +2,8 @@ import AFRAME, { Component, Entity } from "aframe";
 const THREE = AFRAME.THREE;
 
 const maxDistance = 100;
-const speed = 0.1;
+// const speed = 0.1; // Max speed
+const speed = 0.01;
 const maxTrailLength = 10;
 
 interface BulletComponent extends Component {
