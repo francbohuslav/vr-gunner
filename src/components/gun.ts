@@ -1,17 +1,23 @@
-import AFRAME from "aframe";
+import AFRAME, { Component } from "aframe";
 const THREE = AFRAME.THREE;
+
+interface GunComponent extends Component {
+  gunshotSoundPreload: HTMLAudioElement;
+  createBullet: () => void;
+}
 
 AFRAME.registerComponent("gun", {
   schema: {
     gunPosition: { type: "selector" },
   },
 
-  init: function () {
+  init: function (this: GunComponent) {
     this.el.addEventListener("triggerdown", this.createBullet.bind(this));
     document.body.addEventListener("click", this.createBullet.bind(this));
+    this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
 
-  createBullet: function () {
+  createBullet: function (this: GunComponent) {
     try {
       const scene = document.querySelector("a-scene")!;
       const position = new THREE.Vector3();
@@ -22,6 +28,16 @@ AFRAME.registerComponent("gun", {
       const bullet = document.createElement("a-sphere");
       bullet.setAttribute("bullet", { direction });
       bullet.setAttribute("position", position);
+
+      const shotSound = document.createElement("audio");
+      shotSound.src = this.gunshotSoundPreload.src;
+      shotSound.volume = 0.2;
+      shotSound.load();
+
+      shotSound.addEventListener("ended", function () {
+        shotSound.remove();
+      });
+      shotSound.play();
 
       scene.appendChild(bullet);
     } catch (ex) {

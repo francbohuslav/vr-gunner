@@ -11,6 +11,7 @@
       <a-assets>
         <img id="gun-texture" src="./assets/gun.jpg" />
         <a-asset-item id="gun-model" src="./assets/gun.obj"></a-asset-item>
+        <audio id="gunshot-sound-preload" src="./assets/gunshot.mp3" preload="auto"></audio>
       </a-assets>
 
       <a-entity environment="preset: forest; lightPosition: -10 10 10;"></a-entity>
@@ -43,9 +44,8 @@
           <a-entity rotation="-52 0 0">
             <a-entity rotation="0 0 -5">
               <a-entity id="left-gun-position" rotation="0 -6 0">
-                <!-- <a-box id="left-gun-placeholder" width="0.003" height="0.003" depth="0.4" color="red"></a-box> -->
                 <a-entity position="0 -0.11 0.1">
-                  <a-entity id="left-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"> </a-entity>
+                  <a-entity id="left-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"></a-entity>
                 </a-entity>
               </a-entity>
             </a-entity>
