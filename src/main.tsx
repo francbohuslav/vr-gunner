@@ -9,11 +9,11 @@ import "./index.css";
 import { Scene } from "aframe";
 import "aframe-environment-component";
 
-createRoot(document.getElementById("react-root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+// createRoot(document.getElementById("react-root")!).render(
+//   <StrictMode>
+//     <App />
+//   </StrictMode>
+// );
 
 function App() {
   function handleEnterVr(e: MouseEvent<HTMLButtonElement>) {
