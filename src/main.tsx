@@ -1,16 +1,35 @@
-// import { StrictMode } from "react";
-// import { createRoot } from "react-dom/client";
-// import App from "./App.tsx";
-import "./index.css";
+import { MouseEvent, StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import "./components/bullet.ts";
-import "./components/target.ts";
 import "./components/gun.ts";
-import "./components/meta-thumbstick-controls.ts";
 import "./components/make-gun-visible-debug.ts";
+import "./components/meta-thumbstick-controls.ts";
+import "./components/target.ts";
+import "./index.css";
+import { Scene } from "aframe";
 import "aframe-environment-component";
 
-// createRoot(document.getElementById("root")!).render(
-//   <StrictMode>
-//     <App />
-//   </StrictMode>
-// );
+createRoot(document.getElementById("react-root")!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+function App() {
+  function handleEnterVr(e: MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    const scene = document.querySelector("a-scene") as Scene;
+    scene.enterVR();
+  }
+
+  return (
+    <div className="splash-screen">
+      <h1>vrGunner</h1>
+      <img width="512" height="512" src="./images/splash.jpg" alt="vrGunner" />
+      <button type="button" onClick={handleEnterVr}>
+        Start
+      </button>
+    </div>
+  );
+}

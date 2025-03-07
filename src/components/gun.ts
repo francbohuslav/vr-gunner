@@ -20,6 +20,10 @@ AFRAME.registerComponent("gun", {
   createBullet: function (this: GunComponent) {
     try {
       const scene = document.querySelector("a-scene")!;
+      if (!scene.is("vr-mode")) {
+        return;
+      }
+      
       const position = new THREE.Vector3();
       const direction = new THREE.Quaternion();
       this.data.gunPosition.object3D.getWorldPosition(position);

@@ -1,0 +1,40 @@
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  z-index: 9999;
+  gap: 0;
+}
+
+.splash-screen button {
+  background-color: #2196f3;
+  color: white;
+  padding: 14px 20px;
+  margin-top: -0.8em;
+  border: none;
+  cursor: pointer;
+  font-size: 3em;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #2196f3, 0 0 20px #2196f3, 0 0 30px #2196f3, 0 0 40px #2196f3;
+}
+.splash-screen button:hover {
+  background-color: #046bbe;
+  box-shadow: 0 0 10px #046bbe, 0 0 20px #046bbe, 0 0 30px #046bbe, 0 0 40px #046bbe;
+}
+
+.splash-screen h1 {
+  color: white;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 140px;
+  position: relative;
+  margin: 0;
+  margin-bottom: -0.5em;
+  text-shadow: 0 0 10px #2196f3, 0 0 20px #2196f3, 0 0 30px #2196f3, 0 0 40px #2196f3;
+}
