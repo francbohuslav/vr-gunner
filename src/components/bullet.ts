@@ -6,7 +6,10 @@ const maxDistance = 100;
 const defaultSpeed = 0.01;
 const maxTrailLength = 10;
 
+let bulletCounter = 0;
+
 interface BulletComponent extends Component {
+  bulletId: number;
   timeToDestroy: number;
   liveTime: number;
   trail: AFRAME.Entity;
@@ -19,6 +22,7 @@ AFRAME.registerComponent("bullet", {
   },
 
   init: function (this: BulletComponent) {
+    this.bulletId = ++bulletCounter;
     this.el.setAttribute("color", "#ffbd4a");
     this.el.setAttribute("radius", "0.005");
     this.el.setAttribute("metalness", "0.3");
@@ -43,6 +47,7 @@ AFRAME.registerComponent("bullet", {
     const bullet = this.el;
     if (new Date().getTime() > this.timeToDestroy) {
       bullet.parentNode?.removeChild(bullet);
+      return;
     }
 
     this.liveTime += timeDelta;
@@ -59,10 +64,10 @@ AFRAME.registerComponent("bullet", {
     const positionBefore = bullet.object3D.position.clone();
     bullet.object3D.position.add(vector);
 
-    const target = document.getElementById("target") as Entity;
-    target.components["target"].detectImpact(positionBefore, bullet.object3D.position);
+    const target = document.getElementById("target") as Entity | null;
+    target?.components.target.detectImpact(positionBefore, bullet.object3D.position);
 
     const camera = document.getElementById("camera") as Entity;
-    camera.components["player"].detectImpact(positionBefore, bullet.object3D.position);
+    camera.components.player.detectImpact(positionBefore, bullet.object3D.position);
   },
 });

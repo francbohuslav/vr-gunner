@@ -1,9 +1,13 @@
-import AFRAME from "aframe";
+import AFRAME, { Component } from "aframe";
 const THREE = AFRAME.THREE;
 
 const width = 0.4;
 
 let lowestDistance = 100;
+
+interface PlayerComponent extends Component {
+  detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
+}
 
 AFRAME.registerComponent("player", {
   schema: {},
@@ -19,9 +23,16 @@ AFRAME.registerComponent("player", {
     bodyLine.closestPointToPoint(closestPointToHeadOnBulletLine, true, closestPointOnBody);
     const distance = closestPointOnBody.distanceTo(closestPointToHeadOnBulletLine);
     lowestDistance = Math.min(lowestDistance, distance);
+    // console.log("bulletId=" + bulletId, JSON.stringify(bulletLine), JSON.stringify(bodyLine), distance);
     if (distance < width / 2) {
       document.getElementById("text-live")?.setAttribute("value", "AUUUUUU!");
     }
     // document.getElementById("text-live")?.setAttribute("value", lowestDinstance.toFixed(2));
   },
 });
+
+declare module "aframe" {
+  export interface DefaultComponents {
+    player: InstanceType<ComponentConstructor<PlayerComponent>>;
+  }
+}

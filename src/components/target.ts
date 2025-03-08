@@ -2,15 +2,13 @@ import AFRAME, { Component } from "aframe";
 const THREE = AFRAME.THREE;
 
 const width = 1;
-const rounds = 5;
 
 interface TargetComponent extends Component {
-  impactCount: number;
-  startTime: number;
   setRandomPosition(): void;
   createNextShotTime(): number;
   createBullet(): void;
-  getTime(): string;
+  detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
+
   moveLeft: boolean;
   moveSpeed: number;
   nextShotTime: number;
@@ -25,7 +23,6 @@ AFRAME.registerComponent("target", {
     this.el.setAttribute("radius", width / 2);
     this.el.setAttribute("metalness", "0.7");
     this.setRandomPosition();
-    this.impactCount = -1;
     this.nextShotTime = this.createNextShotTime();
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
@@ -65,30 +62,15 @@ AFRAME.registerComponent("target", {
     // console.log(distance);
 
     if (distance < width / 2) {
-      this.impactCount++;
-      let text;
-      if (this.impactCount === 0) {
-        this.startTime = new Date().getTime();
-        text = "HRA JEDE, sestrel kouli";
-      } else if (this.impactCount == rounds) {
-        text = `Konec hry, tvuj cas je ${this.getTime()} sekund.\nStrel znova pro start`;
-        this.impactCount = -1;
-        document.getElementById("text-live")?.setAttribute("value", "");
-      } else {
-        text = `${this.impactCount}/${rounds} - ${this.getTime()}`;
-      }
-      document.getElementById("text-score")?.setAttribute("value", text);
       this.setRandomPosition();
+      const scene = document.querySelector("a-scene")!;
+      scene.components.game.targetHit();
     }
-  },
-
-  getTime(this: TargetComponent) {
-    return ((new Date().getTime() - this.startTime) / 1000).toFixed(3);
   },
 
   createNextShotTime(): number {
     // Shot every 3-8 seconds
-    return new Date().getTime() + (3 + Math.random() * 5) * 1000;
+    return new Date().getTime() + (5 + Math.random() * 5) * 1000;
   },
 
   createBullet(this: TargetComponent) {
@@ -121,7 +103,7 @@ AFRAME.registerComponent("target", {
 
       const shotSound = document.createElement("audio");
       shotSound.src = this.gunshotSoundPreload.src;
-      shotSound.volume = 0.1
+      shotSound.volume = 0.1;
       shotSound.load();
 
       shotSound.addEventListener("ended", function () {
@@ -137,3 +119,9 @@ AFRAME.registerComponent("target", {
     }
   },
 });
+
+declare module "aframe" {
+  export interface DefaultComponents {
+    target: InstanceType<ComponentConstructor<TargetComponent>>;
+  }
+}

@@ -21,7 +21,7 @@ AFRAME.registerComponent("gun", {
     try {
       const scene = document.querySelector("a-scene")!;
       if (!scene.is("vr-mode")) {
-        return;
+        // return;
       }
 
       const position = new THREE.Vector3();
