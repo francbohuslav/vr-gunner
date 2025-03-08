@@ -23,7 +23,7 @@ AFRAME.registerComponent("gun", {
       if (!scene.is("vr-mode")) {
         return;
       }
-      
+
       const position = new THREE.Vector3();
       const direction = new THREE.Quaternion();
       this.data.gunPosition.object3D.getWorldPosition(position);
@@ -46,7 +46,7 @@ AFRAME.registerComponent("gun", {
       scene.appendChild(bullet);
     } catch (ex) {
       if (ex instanceof Error) {
-        document.querySelector("a-text")?.setAttribute("value", ex.message);
+        document.getElementById("text-score")?.setAttribute("value", ex.message);
       }
     }
   },
@@ -54,6 +54,6 @@ AFRAME.registerComponent("gun", {
   tick: function () {
     // const quaternion = new THREE.Quaternion();
     // this.el.object3D.getWorldQuaternion(quaternion);
-    // document.querySelector("a-text")?.setAttribute("value", JSON.stringify(quaternion));
+    // document.getElementById("text-score")?.setAttribute("value", JSON.stringify(quaternion));
   },
 });

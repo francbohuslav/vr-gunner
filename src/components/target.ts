@@ -1,16 +1,20 @@
 import AFRAME, { Component } from "aframe";
 const THREE = AFRAME.THREE;
 
-const width = 0.5;
+const width = 1;
 const rounds = 5;
 
 interface TargetComponent extends Component {
   impactCount: number;
   startTime: number;
   setRandomPosition(): void;
+  createNextShotTime(): number;
+  createBullet(): void;
   getTime(): string;
   moveLeft: boolean;
   moveSpeed: number;
+  nextShotTime: number;
+  gunshotSoundPreload: HTMLAudioElement;
 }
 
 AFRAME.registerComponent("target", {
@@ -18,10 +22,12 @@ AFRAME.registerComponent("target", {
 
   init: function (this: TargetComponent) {
     this.el.setAttribute("color", "red");
-    this.el.setAttribute("radius", width);
+    this.el.setAttribute("radius", width / 2);
     this.el.setAttribute("metalness", "0.7");
     this.setRandomPosition();
     this.impactCount = -1;
+    this.nextShotTime = this.createNextShotTime();
+    this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
 
   tick(this: TargetComponent, _time, timeDelta) {
@@ -33,6 +39,13 @@ AFRAME.registerComponent("target", {
     vector.applyQuaternion(rotation);
     vector.setLength(timeDelta * this.moveSpeed);
     this.el.object3D.position.add(vector);
+
+    // Shot towards player
+    if (new Date().getTime() > this.nextShotTime) {
+      this.createBullet();
+      this.nextShotTime = this.createNextShotTime();
+      // this.nextShotTime = new Date().getTime() * 3600 * 1000;
+    }
   },
 
   setRandomPosition(this: TargetComponent) {
@@ -41,7 +54,7 @@ AFRAME.registerComponent("target", {
     const y = Math.random() * 10 + 0.25;
     this.el.object3D.position.set(x, y, z);
     this.moveLeft = Math.random() > 0.5;
-    this.moveSpeed = Math.random() / 500;
+    this.moveSpeed = Math.random() / 1000;
   },
 
   detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {
@@ -51,7 +64,7 @@ AFRAME.registerComponent("target", {
     const distance = closestPoint.distanceTo(this.el.object3D.position);
     // console.log(distance);
 
-    if (distance < width) {
+    if (distance < width / 2) {
       this.impactCount++;
       let text;
       if (this.impactCount === 0) {
@@ -60,15 +73,67 @@ AFRAME.registerComponent("target", {
       } else if (this.impactCount == rounds) {
         text = `Konec hry, tvuj cas je ${this.getTime()} sekund.\nStrel znova pro start`;
         this.impactCount = -1;
+        document.getElementById("text-live")?.setAttribute("value", "");
       } else {
         text = `${this.impactCount}/${rounds} - ${this.getTime()}`;
       }
-      document.querySelector("a-text")?.setAttribute("value", text);
+      document.getElementById("text-score")?.setAttribute("value", text);
       this.setRandomPosition();
     }
   },
 
   getTime(this: TargetComponent) {
     return ((new Date().getTime() - this.startTime) / 1000).toFixed(3);
+  },
+
+  createNextShotTime(): number {
+    // Shot every 3-8 seconds
+    return new Date().getTime() + (3 + Math.random() * 5) * 1000;
+  },
+
+  createBullet(this: TargetComponent) {
+    try {
+      const scene = document.querySelector("a-scene")!;
+      const camera = document.getElementById("camera") as AFRAME.Entity;
+
+      const offsetTowardsPlayer = new THREE.Vector3();
+      offsetTowardsPlayer
+        .copy(this.el.object3D.position)
+        .sub(camera?.object3D.position)
+        .negate()
+        .setLength(width / 2 + 0.1);
+
+      const position = new THREE.Vector3();
+      position.copy(this.el.object3D.position);
+      position.add(offsetTowardsPlayer);
+
+      const direction = new THREE.Quaternion();
+      direction.setFromUnitVectors(new THREE.Vector3(0, 0, -1), offsetTowardsPlayer.normalize());
+
+      // How good eye has enemy. Higher = more accurate.
+      const dispersion = 25.0;
+      const randomizer = new THREE.Vector3((Math.random() - 0.5) / dispersion, (Math.random() - 0.5) / dispersion, 1).normalize();
+      direction.multiply(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), randomizer));
+
+      const bullet = document.createElement("a-sphere");
+      bullet.setAttribute("bullet", { direction, speed: 0.003 });
+      bullet.setAttribute("position", position);
+
+      const shotSound = document.createElement("audio");
+      shotSound.src = this.gunshotSoundPreload.src;
+      shotSound.volume = 0.1
+      shotSound.load();
+
+      shotSound.addEventListener("ended", function () {
+        shotSound.remove();
+      });
+      shotSound.play();
+
+      scene.appendChild(bullet);
+    } catch (ex) {
+      if (ex instanceof Error) {
+        document.getElementById("text-score")?.setAttribute("value", ex.message);
+      }
+    }
   },
 });

@@ -5,6 +5,7 @@ import "./components/gun.ts";
 import "./components/make-gun-visible-debug.ts";
 import "./components/meta-thumbstick-controls.ts";
 import "./components/target.ts";
+import "./components/player.ts";
 import "./index.css";
 import { Scene } from "aframe";
 import "aframe-environment-component";

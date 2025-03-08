@@ -20,8 +20,9 @@
 
       <!-- Camera + controllers rig -->
       <a-entity id="camera-rig">
-        <a-camera id="camera" position="0 1.6 0">
-          <a-text position="0 0.3 -2" value="Zasahni cervenou kouli pro zacatek hry" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
+        <a-camera id="camera" player position="0 1.6 0">
+          <a-text id="text-score" position="0 0.3 -2" value="Zasahni cervenou kouli pro zacatek hry" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
+          <a-text id="text-live" position="0 -0.3 -2" value="" align="center" color="#F00" scale="0.3 0.3 0.3"></a-text>
         </a-camera>
 
         <a-entity make-gun-visible-debug="leftGun: false">

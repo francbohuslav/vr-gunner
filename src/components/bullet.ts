@@ -2,8 +2,8 @@ import AFRAME, { Component, Entity } from "aframe";
 const THREE = AFRAME.THREE;
 
 const maxDistance = 100;
-// const speed = 0.1; // Max speed
-const speed = 0.01;
+// const defaultSpeed = 0.1; // Max speed
+const defaultSpeed = 0.01;
 const maxTrailLength = 10;
 
 interface BulletComponent extends Component {
@@ -15,6 +15,7 @@ interface BulletComponent extends Component {
 AFRAME.registerComponent("bullet", {
   schema: {
     direction: { type: "vec4" },
+    speed: { type: "number", default: defaultSpeed },
   },
 
   init: function (this: BulletComponent) {
@@ -33,7 +34,7 @@ AFRAME.registerComponent("bullet", {
     trail.setAttribute("material", "opacity: 0.5; shader: flat");
     this.el.appendChild(trail);
 
-    const timeToLive = maxDistance / speed / 1000;
+    const timeToLive = maxDistance / this.data.speed / 1000;
     this.timeToDestroy = new Date().getTime() + timeToLive * 1000;
     this.liveTime = 0;
   },
@@ -47,18 +48,21 @@ AFRAME.registerComponent("bullet", {
     this.liveTime += timeDelta;
 
     // Draw trail from origin to bullet is smaller then maxTrailLength
-    const trailLength = Math.max(0, Math.min(this.liveTime * speed - 0.16, maxTrailLength));
+    const trailLength = Math.max(0, Math.min(this.liveTime * this.data.speed - 0.16, maxTrailLength));
     const trailOffset = new THREE.Vector3(0, 0, trailLength / 2);
     trailOffset.applyQuaternion(this.data.direction);
     this.trail.object3D.position.copy(trailOffset);
     this.trail.setAttribute("depth", trailLength);
 
-    const vector = new THREE.Vector3(0, 0, -timeDelta * speed);
+    const vector = new THREE.Vector3(0, 0, -timeDelta * this.data.speed);
     vector.applyQuaternion(this.data.direction);
     const positionBefore = bullet.object3D.position.clone();
     bullet.object3D.position.add(vector);
 
     const target = document.getElementById("target") as Entity;
     target.components["target"].detectImpact(positionBefore, bullet.object3D.position);
+
+    const camera = document.getElementById("camera") as Entity;
+    camera.components["player"].detectImpact(positionBefore, bullet.object3D.position);
   },
 });

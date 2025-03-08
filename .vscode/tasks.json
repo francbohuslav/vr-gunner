@@ -5,7 +5,14 @@
       "type": "npm",
       "script": "dev",
       "problemMatcher": [],
-      "label": "Start dev",
+      "label": "Start dev"
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "Build for release",
     }
   ]
 }
