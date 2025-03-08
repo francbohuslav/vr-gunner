@@ -11,7 +11,7 @@ let bulletCounter = 0;
 interface BulletComponent extends Component {
   bulletId: number;
   timeToDestroy: number;
-  liveTime: number;
+  lifeTime: number;
   trail: AFRAME.Entity;
   removeBullet(): void;
 }
@@ -41,7 +41,7 @@ AFRAME.registerComponent("bullet", {
 
     const timeToLive = maxDistance / this.data.speed / 1000;
     this.timeToDestroy = new Date().getTime() + timeToLive * 1000;
-    this.liveTime = 0;
+    this.lifeTime = 0;
   },
 
   tick(this: BulletComponent, _time, timeDelta) {
@@ -51,10 +51,10 @@ AFRAME.registerComponent("bullet", {
       return;
     }
 
-    this.liveTime += timeDelta;
+    this.lifeTime += timeDelta;
 
     // Draw trail from origin to bullet is smaller then maxTrailLength
-    const trailLength = Math.max(0, Math.min(this.liveTime * this.data.speed - 0.16, maxTrailLength));
+    const trailLength = Math.max(0, Math.min(this.lifeTime * this.data.speed - 0.16, maxTrailLength));
     const trailOffset = new THREE.Vector3(0, 0, trailLength / 2);
     trailOffset.applyQuaternion(this.data.direction);
     this.trail.object3D.position.copy(trailOffset);

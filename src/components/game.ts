@@ -15,7 +15,7 @@ interface GameComponent extends Component {
   targetHit(): void;
   playerHit(): void;
   updateMessage(): void;
-  lives: number;
+  lifes: number;
 }
 
 AFRAME.registerComponent("game", {
@@ -27,7 +27,7 @@ AFRAME.registerComponent("game", {
       impactCount: 0,
       startTime: 0,
     };
-    this.lives = 3;
+    this.lifes = 3;
 
     this.updateMessage();
   },
@@ -38,14 +38,14 @@ AFRAME.registerComponent("game", {
       impactCount: 0,
       startTime: new Date().getTime(),
     };
-    this.lives = 3;
+    this.lifes = 3;
 
     const scene = document.querySelector("a-scene")!;
     const target = document.createElement("a-sphere");
     target.setAttribute("target", {});
     scene.appendChild(target);
     this.updateMessage();
-    document.getElementById("text-live")?.setAttribute("value", ``);
+    document.getElementById("text-life")?.setAttribute("value", ``);
   },
 
   targetHit(this: GameComponent) {
@@ -61,13 +61,13 @@ AFRAME.registerComponent("game", {
     if (!this.round.isRunning) {
       return;
     }
-    this.lives -= 1;
-    if (this.lives > 1) {
-      document.getElementById("text-live")?.setAttribute("value", `Mas jeste ${this.lives} zivoty.`);
-    } else if (this.lives === 1) {
-      document.getElementById("text-live")?.setAttribute("value", `Mas posledni zivot.`);
+    this.lifes -= 1;
+    if (this.lifes > 1) {
+      document.getElementById("text-life")?.setAttribute("value", `Mas jeste ${this.lifes} zivoty.`);
+    } else if (this.lifes === 1) {
+      document.getElementById("text-life")?.setAttribute("value", `Mas posledni zivot.`);
     } else {
-      document.getElementById("text-live")?.setAttribute("value", `Konec hry.`);
+      document.getElementById("text-life")?.setAttribute("value", `Konec hry.`);
       this.stopRound();
     }
   },
