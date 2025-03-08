@@ -10,9 +10,12 @@ interface GameComponent extends Component {
     impactCount: number;
   };
   startRound(): string;
+  stopRound(): void;
   getTimeString(): string;
   targetHit(): void;
+  playerHit(): void;
   updateMessage(): void;
+  lives: number;
 }
 
 AFRAME.registerComponent("game", {
@@ -24,6 +27,7 @@ AFRAME.registerComponent("game", {
       impactCount: 0,
       startTime: 0,
     };
+    this.lives = 3;
 
     this.updateMessage();
   },
@@ -34,23 +38,45 @@ AFRAME.registerComponent("game", {
       impactCount: 0,
       startTime: new Date().getTime(),
     };
+    this.lives = 3;
 
     const scene = document.querySelector("a-scene")!;
     const target = document.createElement("a-sphere");
     target.setAttribute("target", {});
     scene.appendChild(target);
     this.updateMessage();
+    document.getElementById("text-live")?.setAttribute("value", ``);
   },
 
   targetHit(this: GameComponent) {
     const round = this.round;
     round.impactCount++;
     if (round.impactCount === targetsPerRound) {
-      round.isRunning = false;
-      const scene = document.querySelector("a-scene")!;
-      scene.removeChild(document.getElementById("target")!);
+      this.stopRound();
     }
     this.updateMessage();
+  },
+
+  playerHit(this: GameComponent) {
+    if (!this.round.isRunning) {
+      return;
+    }
+    this.lives -= 1;
+    if (this.lives > 1) {
+      document.getElementById("text-live")?.setAttribute("value", `Mas jeste ${this.lives} zivoty.`);
+    } else if (this.lives === 1) {
+      document.getElementById("text-live")?.setAttribute("value", `Mas posledni zivot.`);
+    } else {
+      document.getElementById("text-live")?.setAttribute("value", `Konec hry.`);
+      this.stopRound();
+    }
+  },
+
+  stopRound(this: GameComponent) {
+    const round = this.round;
+    round.isRunning = false;
+    const target = document.getElementById("target");
+    target?.parentNode?.removeChild(document.getElementById("target")!);
   },
 
   updateMessage(this: GameComponent) {
@@ -58,10 +84,11 @@ AFRAME.registerComponent("game", {
     const round = this.round;
     if (!round.isRunning) {
       if (round.impactCount === 0) {
-        text = `Musis sestrelit ${targetsPerRound} cilu. Vystrel pro zacatek hry.`;
+        text = `Musis sestrelit ${targetsPerRound} cilu.`;
       } else {
-        text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.\nStrel znova pro start`;
+        text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.`;
       }
+      text += `\nZmáčkni (A) pro zacatek hry.`;
     } else {
       if (round.impactCount === 0) {
         text = "Hrajes, strilej!!!";

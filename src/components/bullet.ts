@@ -13,6 +13,7 @@ interface BulletComponent extends Component {
   timeToDestroy: number;
   liveTime: number;
   trail: AFRAME.Entity;
+  removeBullet(): void;
 }
 
 AFRAME.registerComponent("bullet", {
@@ -46,7 +47,7 @@ AFRAME.registerComponent("bullet", {
   tick(this: BulletComponent, _time, timeDelta) {
     const bullet = this.el;
     if (new Date().getTime() > this.timeToDestroy) {
-      bullet.parentNode?.removeChild(bullet);
+      this.removeBullet();
       return;
     }
 
@@ -68,6 +69,13 @@ AFRAME.registerComponent("bullet", {
     target?.components.target.detectImpact(positionBefore, bullet.object3D.position);
 
     const camera = document.getElementById("camera") as Entity;
-    camera.components.player.detectImpact(positionBefore, bullet.object3D.position);
+    if (camera.components.player.detectImpact(positionBefore, bullet.object3D.position)) {
+      this.removeBullet();
+      return
+    }
+  },
+
+  removeBullet() {
+    this.el.parentNode?.removeChild(this.el);
   },
 });

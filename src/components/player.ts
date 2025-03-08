@@ -6,7 +6,7 @@ const width = 0.4;
 let lowestDistance = 100;
 
 interface PlayerComponent extends Component {
-  detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
+  detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): boolean;
 }
 
 AFRAME.registerComponent("player", {
@@ -25,7 +25,11 @@ AFRAME.registerComponent("player", {
     lowestDistance = Math.min(lowestDistance, distance);
     // console.log("bulletId=" + bulletId, JSON.stringify(bulletLine), JSON.stringify(bodyLine), distance);
     if (distance < width / 2) {
-      document.getElementById("text-live")?.setAttribute("value", "AUUUUUU!");
+      const scene = document.querySelector("a-scene")!;
+      scene.components.game.playerHit();
+      return true;
+    } else {
+      return false;
     }
     // document.getElementById("text-live")?.setAttribute("value", lowestDinstance.toFixed(2));
   },

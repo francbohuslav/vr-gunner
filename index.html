@@ -23,10 +23,8 @@
         <a-camera id="camera" player position="0 1.6 0">
           <a-text id="text-score" position="0 0.3 -2" value="" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
           <a-text id="text-live" position="0 -0.3 -2" value="" align="center" color="#F00" scale="0.3 0.3 0.3"></a-text>
-        </a-camera>
 
-        <a-entity make-gun-visible-debug="leftGun: false">
-          <a-entity meta-touch-controls="hand: right; model: false" gun="gunPosition: #right-gun-position">
+          <a-entity position="0 -0.03 -0.5" rotation="50.5 -6 0" gun="gunPosition: #right-gun-position">
             <a-entity rotation="-52 0 0">
               <a-entity rotation="0 0 -5">
                 <a-entity id="right-gun-position" rotation="0 6 0">
@@ -35,6 +33,21 @@
                     <a-entity id="right-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045">
                     </a-entity>
                   </a-entity>
+                </a-entity>
+              </a-entity>
+            </a-entity>
+          </a-entity>
+        </a-camera>
+      </a-entity>
+
+      <a-entity make-gun-visible-debug="leftGun: false">
+        <a-entity meta-touch-controls="hand: right; model: false" gun="gunPosition: #right-gun-position">
+          <a-entity rotation="-52 0 0">
+            <a-entity rotation="0 0 -5">
+              <a-entity id="right-gun-position" rotation="0 6 0">
+                <!-- <a-box id="right-gun-placeholder" width="0.003" height="0.003" depth="0.4" color="red"></a-box> -->
+                <a-entity position="0 -0.11 0.1">
+                  <a-entity id="right-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"> </a-entity>
                 </a-entity>
               </a-entity>
             </a-entity>
