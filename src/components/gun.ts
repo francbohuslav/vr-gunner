@@ -4,6 +4,7 @@ const THREE = AFRAME.THREE;
 interface GunComponent extends Component {
   gunshotSoundPreload: HTMLAudioElement;
   createBullet: () => void;
+  triggerPressed: () => void;
 }
 
 AFRAME.registerComponent("gun", {
@@ -12,9 +13,22 @@ AFRAME.registerComponent("gun", {
   },
 
   init: function (this: GunComponent) {
-    this.el.addEventListener("triggerdown", this.createBullet.bind(this));
-    document.body.addEventListener("click", this.createBullet.bind(this));
+    this.el.addEventListener("triggerdown", this.triggerPressed.bind(this));
+    document.body.addEventListener("keydown", (e) => e.key === " " && this.triggerPressed());
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
+  },
+
+  triggerPressed: function (this: GunComponent) {
+    const scene = document.querySelector("a-scene")!;
+    const game = scene.components.game;
+    if (game.round.isRunning) {
+      // Do not shoot immediately from left gun after start
+      if (game.round.startTime + 10 < new Date().getTime()) {
+        this.createBullet();
+      }
+    } else {
+      game.startRound();
+    }
   },
 
   createBullet: function (this: GunComponent) {

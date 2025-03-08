@@ -19,6 +19,7 @@ AFRAME.registerComponent("target", {
   schema: {},
 
   init: function (this: TargetComponent) {
+    this.el.setAttribute("id", "target");
     this.el.setAttribute("color", "red");
     this.el.setAttribute("radius", width / 2);
     this.el.setAttribute("metalness", "0.7");

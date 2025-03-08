@@ -1,39 +1,79 @@
 import AFRAME, { Component } from "aframe";
 
-const rounds = 5;
+const targetsPerRound = 5;
 
 interface GameComponent extends Component {
-  impactCount: number;
-  startTime: number;
+  round: {
+    isRunning: boolean;
+    startTime: number;
+    /** How many targets have been hit */
+    impactCount: number;
+  };
+  startRound(): string;
   getTimeString(): string;
   targetHit(): void;
+  updateMessage(): void;
 }
 
 AFRAME.registerComponent("game", {
   schema: {},
 
   init: function (this: GameComponent) {
-    this.impactCount = -1;
+    this.round = {
+      isRunning: false,
+      impactCount: 0,
+      startTime: 0,
+    };
+
+    this.updateMessage();
+  },
+
+  startRound(this: GameComponent) {
+    this.round = {
+      isRunning: true,
+      impactCount: 0,
+      startTime: new Date().getTime(),
+    };
+
+    const scene = document.querySelector("a-scene")!;
+    const target = document.createElement("a-sphere");
+    target.setAttribute("target", {});
+    scene.appendChild(target);
+    this.updateMessage();
   },
 
   targetHit(this: GameComponent) {
-    this.impactCount++;
-    let text;
-    if (this.impactCount === 0) {
-      this.startTime = new Date().getTime();
-      text = "HRA JEDE, sestrel kouli";
-    } else if (this.impactCount == rounds) {
-      text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.\nStrel znova pro start`;
-      this.impactCount = -1;
-      document.getElementById("text-live")?.setAttribute("value", "");
+    const round = this.round;
+    round.impactCount++;
+    if (round.impactCount === targetsPerRound) {
+      round.isRunning = false;
+      const scene = document.querySelector("a-scene")!;
+      scene.removeChild(document.getElementById("target")!);
+    }
+    this.updateMessage();
+  },
+
+  updateMessage(this: GameComponent) {
+    let text = "";
+    const round = this.round;
+    if (!round.isRunning) {
+      if (round.impactCount === 0) {
+        text = `Musis sestrelit ${targetsPerRound} cilu. Vystrel pro zacatek hry.`;
+      } else {
+        text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.\nStrel znova pro start`;
+      }
     } else {
-      text = `${this.impactCount}/${rounds} - ${this.getTimeString()}`;
+      if (round.impactCount === 0) {
+        text = "Hrajes, strilej!!!";
+      } else {
+        text = `${round.impactCount}/${targetsPerRound} - ${this.getTimeString()}`;
+      }
     }
     document.getElementById("text-score")?.setAttribute("value", text);
   },
 
   getTimeString(this: GameComponent) {
-    return ((new Date().getTime() - this.startTime) / 1000).toFixed(3);
+    return ((new Date().getTime() - this.round.startTime) / 1000).toFixed(3);
   },
 });
 
