@@ -31,7 +31,6 @@ AFRAME.registerComponent("player", {
     } else {
       return false;
     }
-    // document.getElementById("text-life")?.setAttribute("value", lowestDinstance.toFixed(2));
   },
 });
 

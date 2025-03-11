@@ -1,6 +1,7 @@
 import AFRAME, { Component } from "aframe";
 
 const targetsPerRound = 5;
+const startLives = 3;
 
 interface GameComponent extends Component {
   round: {
@@ -15,7 +16,8 @@ interface GameComponent extends Component {
   targetHit(): void;
   playerHit(): void;
   updateMessage(): void;
-  lifes: number;
+  updateLives(): void;
+  lives: number;
 }
 
 AFRAME.registerComponent("game", {
@@ -27,8 +29,9 @@ AFRAME.registerComponent("game", {
       impactCount: 0,
       startTime: 0,
     };
-    this.lifes = 3;
+    this.lives = startLives;
 
+    this.updateLives();
     this.updateMessage();
   },
 
@@ -38,14 +41,14 @@ AFRAME.registerComponent("game", {
       impactCount: 0,
       startTime: new Date().getTime(),
     };
-    this.lifes = 3;
+    this.lives = startLives;
 
     const scene = document.querySelector("a-scene")!;
     const target = document.createElement("a-sphere");
     target.setAttribute("target", {});
     scene.appendChild(target);
+    this.updateLives();
     this.updateMessage();
-    document.getElementById("text-life")?.setAttribute("value", ``);
   },
 
   targetHit(this: GameComponent) {
@@ -61,15 +64,12 @@ AFRAME.registerComponent("game", {
     if (!this.round.isRunning) {
       return;
     }
-    this.lifes -= 1;
-    if (this.lifes > 1) {
-      document.getElementById("text-life")?.setAttribute("value", `Mas jeste ${this.lifes} zivoty.`);
-    } else if (this.lifes === 1) {
-      document.getElementById("text-life")?.setAttribute("value", `Mas posledni zivot.`);
-    } else {
-      document.getElementById("text-life")?.setAttribute("value", `Konec hry.`);
+    this.lives -= 1;
+    if (this.lives === 0) {
       this.stopRound();
     }
+    this.updateLives();
+    this.updateMessage();
   },
 
   stopRound(this: GameComponent) {
@@ -83,7 +83,9 @@ AFRAME.registerComponent("game", {
     let text = "";
     const round = this.round;
     if (!round.isRunning) {
-      if (round.impactCount === 0) {
+      if (this.lives === 0) {
+        text = "Zemrel jsi, salate.";
+      } else if (round.impactCount === 0) {
         text = `Musis sestrelit ${targetsPerRound} cilu.`;
       } else {
         text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.`;
@@ -97,6 +99,13 @@ AFRAME.registerComponent("game", {
       }
     }
     document.getElementById("text-score")?.setAttribute("value", text);
+  },
+
+  updateLives(this: GameComponent) {
+    console.log("updateLives", this.lives);
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById("life-" + i)?.setAttribute("visible", (i <= this.lives).toString());
+    }
   },
 
   getTimeString(this: GameComponent) {
