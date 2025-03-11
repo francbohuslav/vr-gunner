@@ -91,7 +91,7 @@ AFRAME.registerComponent("game", {
       } else {
         text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.`;
       }
-      text += `\nZmáčkni (A) pro zacatek hry.`;
+      text += `\nZmackni (A) pro zacatek hry.`;
     } else {
       if (round.impactCount === 0) {
         text = "Hrajes, strilej!!!";

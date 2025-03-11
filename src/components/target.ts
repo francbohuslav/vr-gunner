@@ -129,13 +129,14 @@ AFRAME.registerComponent("target", {
       .negate()
       .setLength(width / 2 + 0.1);
 
-    const position = new THREE.Vector3();
-    position.copy(this.el.object3D.position);
-    position.add(offsetTowardsPlayer);
+    const bulletPosition = new THREE.Vector3();
+    bulletPosition.copy(this.el.object3D.position);
+    bulletPosition.add(offsetTowardsPlayer);
 
-    const direction = new THREE.Quaternion();
-    direction.setFromUnitVectors(new THREE.Vector3(0, 0, -1), offsetTowardsPlayer.normalize());
-    return [position.clone(), direction.clone()];
+    const directionAroundY = new THREE.Vector3(offsetTowardsPlayer.x, 0, offsetTowardsPlayer.z).normalize();
+    let direction = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, -1), directionAroundY);
+    direction = new THREE.Quaternion().setFromUnitVectors(directionAroundY, offsetTowardsPlayer.normalize()).multiply(direction);
+    return [bulletPosition, direction];
   },
 });
 
