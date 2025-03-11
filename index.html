@@ -14,7 +14,10 @@
         <img id="life-texture" src="./assets/heart.png" />
         <a-mixin id="mixin-hearth" geometry="primitive: plane" scale="0.1 0.1 0.1" material="src: #life-texture; transparent: true; shader: flat"></a-mixin>
         <a-asset-item id="gun-model" src="./assets/gun.obj"></a-asset-item>
+        <a-asset-item id="enemy-ufo-model" src="./assets/enemy-ufo.glb"></a-asset-item>
         <audio id="gunshot-sound-preload" src="./assets/gunshot.mp3" preload="auto"></audio>
+
+        <a-mixin id="mixin-target" gltf-model="#enemy-ufo-model" scale="0.05 0.05 0.05"></a-mixin>
       </a-assets>
 
       <a-entity environment="preset: forest; lightPosition: -10 10 10;"></a-entity>
@@ -52,7 +55,7 @@
               <a-entity id="right-gun-position" rotation="0 6 0">
                 <!-- <a-box id="right-gun-placeholder" width="0.003" height="0.003" depth="0.4" color="red"></a-box> -->
                 <a-entity position="0 -0.11 0.1">
-                  <a-entity id="right-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"> </a-entity>
+                  <a-entity id="right-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"></a-entity>
                 </a-entity>
               </a-entity>
             </a-entity>
@@ -73,8 +76,6 @@
           </a-entity>
         </a-entity>
       </a-entity>
-
-      <!-- <a-entity position="0 0 -10" obj-model="obj: #enemy-model"></a-entity> -->
     </a-scene>
     <script type="module" src="/src/main.tsx"></script>
   </body>

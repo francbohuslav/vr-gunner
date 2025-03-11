@@ -44,7 +44,8 @@ AFRAME.registerComponent("game", {
     this.lives = startLives;
 
     const scene = document.querySelector("a-scene")!;
-    const target = document.createElement("a-sphere");
+    const target = document.createElement("a-entity");
+    target.setAttribute("mixin", "mixin-target");
     target.setAttribute("target", {});
     scene.appendChild(target);
     this.updateLives();

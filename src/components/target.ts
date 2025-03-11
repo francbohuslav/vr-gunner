@@ -8,6 +8,7 @@ interface TargetComponent extends Component {
   createNextShotTime(): number;
   createBullet(): void;
   detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
+  getBulletPosAndRotToPlayer(this: TargetComponent): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion];
 
   moveLeft: boolean;
   moveSpeed: number;
@@ -20,23 +21,34 @@ AFRAME.registerComponent("target", {
 
   init: function (this: TargetComponent) {
     this.el.setAttribute("id", "target");
-    this.el.setAttribute("color", "red");
-    this.el.setAttribute("radius", width / 2);
-    this.el.setAttribute("metalness", "0.7");
+    const sphere = document.createElement("a-sphere");
+    sphere.setAttribute("color", "red");
+    sphere.setAttribute("radius", width / 2);
+    sphere.setAttribute("metalness", "0.7");
+    sphere.setAttribute("scale", "20 20 20");
+    // this.el.appendChild(sphere);
     this.setRandomPosition();
     this.nextShotTime = this.createNextShotTime();
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
 
   tick(this: TargetComponent, _time, timeDelta) {
-    // Move around player, preserve distance from ground
-    const pos = this.el.object3D.position;
-    const vector = new THREE.Vector3(pos.x, 0, pos.z);
-    const rotation = new THREE.Quaternion();
-    rotation.setFromAxisAngle(new THREE.Vector3(0, this.moveLeft ? 1 : -1, 0), Math.PI / 2);
-    vector.applyQuaternion(rotation);
-    vector.setLength(timeDelta * this.moveSpeed);
-    this.el.object3D.position.add(vector);
+    {
+      // Move around player, preserve distance from ground
+      const pos = this.el.object3D.position;
+      const vector = new THREE.Vector3(pos.x, 0, pos.z);
+      const rotation = new THREE.Quaternion();
+      rotation.setFromAxisAngle(new THREE.Vector3(0, this.moveLeft ? 1 : -1, 0), Math.PI / 2);
+      vector.applyQuaternion(rotation);
+      vector.setLength(timeDelta * this.moveSpeed);
+      this.el.object3D.position.add(vector);
+    }
+
+    const rotation = this.getBulletPosAndRotToPlayer()[1];
+    const turnAround = new THREE.Quaternion();
+    turnAround.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+    rotation.multiply(turnAround);
+    this.el.object3D.rotation.setFromQuaternion(rotation);
 
     // Shot towards player
     if (new Date().getTime() > this.nextShotTime) {
@@ -77,21 +89,8 @@ AFRAME.registerComponent("target", {
   createBullet(this: TargetComponent) {
     try {
       const scene = document.querySelector("a-scene")!;
-      const camera = document.getElementById("camera") as AFRAME.Entity;
 
-      const offsetTowardsPlayer = new THREE.Vector3();
-      offsetTowardsPlayer
-        .copy(this.el.object3D.position)
-        .sub(camera?.object3D.position)
-        .negate()
-        .setLength(width / 2 + 0.1);
-
-      const position = new THREE.Vector3();
-      position.copy(this.el.object3D.position);
-      position.add(offsetTowardsPlayer);
-
-      const direction = new THREE.Quaternion();
-      direction.setFromUnitVectors(new THREE.Vector3(0, 0, -1), offsetTowardsPlayer.normalize());
+      const [position, direction] = this.getBulletPosAndRotToPlayer();
 
       // How good eye has enemy. Higher = more accurate.
       const dispersion = 25.0;
@@ -118,6 +117,25 @@ AFRAME.registerComponent("target", {
         document.getElementById("text-score")?.setAttribute("value", ex.message);
       }
     }
+  },
+
+  getBulletPosAndRotToPlayer(this: TargetComponent): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion] {
+    const camera = document.getElementById("camera") as AFRAME.Entity;
+
+    const offsetTowardsPlayer = new THREE.Vector3();
+    offsetTowardsPlayer
+      .copy(this.el.object3D.position)
+      .sub(camera?.object3D.position)
+      .negate()
+      .setLength(width / 2 + 0.1);
+
+    const position = new THREE.Vector3();
+    position.copy(this.el.object3D.position);
+    position.add(offsetTowardsPlayer);
+
+    const direction = new THREE.Quaternion();
+    direction.setFromUnitVectors(new THREE.Vector3(0, 0, -1), offsetTowardsPlayer.normalize());
+    return [position.clone(), direction.clone()];
   },
 });
 
