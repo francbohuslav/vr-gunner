@@ -13,6 +13,16 @@ AFRAME.registerComponent("gun", {
   },
 
   init: function (this: GunComponent) {
+    //TODO: BF: DEBUG android
+    document.body.addEventListener("mousedown", () => {
+      const scene = document.querySelector("a-scene")!;
+      const game = scene.components.game;
+      if (game.round.isRunning) {
+        this.createBullet();
+      } else {
+        this.startRound();
+      }
+    });
     this.el.addEventListener("abuttondown", this.startRound.bind(this));
     this.el.addEventListener("triggerdown", this.createBullet.bind(this));
     document.body.addEventListener("keydown", (e) => {

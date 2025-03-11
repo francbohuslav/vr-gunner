@@ -13,9 +13,7 @@
         <img id="gun-texture" src="./assets/gun.jpg" />
         <img id="life-texture" src="./assets/heart.png" />
         <a-mixin id="mixin-hearth" geometry="primitive: plane" scale="0.1 0.1 0.1" material="src: #life-texture; transparent: true; shader: flat"></a-mixin>
-
         <a-asset-item id="gun-model" src="./assets/gun.obj"></a-asset-item>
-        <!-- <a-asset-item id="enemy-model" src="./assets/enemy.glb"></a-asset-item> -->
         <audio id="gunshot-sound-preload" src="./assets/gunshot.mp3" preload="auto"></audio>
       </a-assets>
 
@@ -23,7 +21,8 @@
 
       <!-- Camera + controllers rig -->
       <a-entity id="camera-rig">
-        <a-camera id="camera" player position="0 1.6 0">
+        <!-- DEBUG FOV -->
+        <a-camera id="camera" player position="0 1.6 0" fov="45">
           <a-text id="text-score" position="0 0.3 -2" value="" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
           <a-entity>
             <a-entity id="life-1" mixin="mixin-hearth" position="-0.12 -0.3 -2"></a-entity>
@@ -31,6 +30,7 @@
             <a-entity id="life-3" mixin="mixin-hearth" position="0.12 -0.3 -2"></a-entity>
           </a-entity>
 
+          <!-- DEBUG central gun -->
           <a-entity visible="true" position="0 -0.03 -0.5" rotation="50.5 -6 0" gun="gunPosition: #center-gun-position">
             <a-entity rotation="-52 0 0">
               <a-entity rotation="0 0 -5">
