@@ -56,7 +56,7 @@ AFRAME.registerComponent("gun", {
       this.data.gunPosition.object3D.getWorldPosition(position);
       this.data.gunPosition.object3D.getWorldQuaternion(direction);
 
-      const bullet = document.createElement("a-sphere");
+      const bullet = document.createElement("a-entity");
       bullet.setAttribute("bullet", { direction });
       bullet.setAttribute("position", position);
 

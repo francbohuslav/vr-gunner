@@ -3,6 +3,7 @@ const THREE = AFRAME.THREE;
 
 const maxDistance = 100;
 // const defaultSpeed = 0.1; // Max speed
+//TODO: BF: pri vysich rychlostech nebude fugovat kolize
 const defaultSpeed = 0.01;
 const maxTrailLength = 10;
 
@@ -14,6 +15,7 @@ interface BulletComponent extends Component {
   lifeTime: number;
   trail: AFRAME.Entity;
   removeBullet(): void;
+  processCollision(event: Event): void;
 }
 
 AFRAME.registerComponent("bullet", {
@@ -24,14 +26,17 @@ AFRAME.registerComponent("bullet", {
 
   init: function (this: BulletComponent) {
     this.bulletId = ++bulletCounter;
-    this.el.setAttribute("color", "#ffbd4a");
-    this.el.setAttribute("radius", "0.005");
-    this.el.setAttribute("metalness", "0.3");
+    this.el.setAttribute("geometry", "primitive: sphere; radius: 0.005; segmentsWidth: 8; segmentsHeight: 4");
+    this.el.setAttribute("material", "color: #ffbd4a; metalness: 0.3");
+    this.el.setAttribute("obb-collider", "");
+
+    this.el.object3D.setRotationFromQuaternion(this.data.direction);
+
+    this.el.addEventListener("obbcollisionstarted", this.processCollision.bind(this));
 
     this.trail = document.createElement("a-box");
     const trail = this.trail;
 
-    trail.object3D.setRotationFromQuaternion(this.data.direction);
     trail.setAttribute("width", "0.003");
     trail.setAttribute("height", "0.003");
     trail.setAttribute("depth", "0");
@@ -56,7 +61,6 @@ AFRAME.registerComponent("bullet", {
     // Draw trail from origin to bullet is smaller then maxTrailLength
     const trailLength = Math.max(0, Math.min(this.lifeTime * this.data.speed - 0.16, maxTrailLength));
     const trailOffset = new THREE.Vector3(0, 0, trailLength / 2);
-    trailOffset.applyQuaternion(this.data.direction);
     this.trail.object3D.position.copy(trailOffset);
     this.trail.setAttribute("depth", trailLength);
 
@@ -65,14 +69,22 @@ AFRAME.registerComponent("bullet", {
     const positionBefore = bullet.object3D.position.clone();
     bullet.object3D.position.add(vector);
 
-    const target = document.getElementById("target") as Entity | null;
-    target?.components.target.detectImpact(positionBefore, bullet.object3D.position);
+    // const target = document.getElementById("target") as Entity | null;
+    // target?.components.target.detectImpact(positionBefore, bullet.object3D.position);
 
     const camera = document.getElementById("camera") as Entity;
     if (camera.components.player.detectImpact(positionBefore, bullet.object3D.position)) {
       this.removeBullet();
-      return
+      return;
     }
+  },
+
+  processCollision(e: CustomEvent<{ withEl: AFRAME.Entity }>) {
+    const entity = e.detail.withEl;
+    if (entity.id !== "target") {
+      return;
+    }
+    e.detail.withEl.components.target.targetHit();
   },
 
   removeBullet() {

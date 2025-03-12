@@ -1,19 +1,19 @@
 import AFRAME, { Component } from "aframe";
 const THREE = AFRAME.THREE;
 
-const width = 1;
-
 interface TargetComponent extends Component {
   setRandomPosition(): void;
   createNextShotTime(): number;
   createBullet(): void;
-  detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
-  getBulletPosAndRotToPlayer(this: TargetComponent): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion];
+  // detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
+  getBulletPosAndRotToPlayer(): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion];
+  targetHit(): void;
 
   moveLeft: boolean;
   moveSpeed: number;
   nextShotTime: number;
   gunshotSoundPreload: HTMLAudioElement;
+  box: AFRAME.THREE.Vector3;
 }
 
 AFRAME.registerComponent("target", {
@@ -21,15 +21,14 @@ AFRAME.registerComponent("target", {
 
   init: function (this: TargetComponent) {
     this.el.setAttribute("id", "target");
-    // this.el.setAttribute("obb-collider", "centerModel: true"); 
+    this.el.setAttribute("obb-collider", "centerModel: true");
     this.el.setAttribute("mixin", "mixin-target");
+    this.box = new THREE.Vector3();
 
-    const sphere = document.createElement("a-sphere");
-    sphere.setAttribute("color", "red");
-    sphere.setAttribute("radius", width / 2);
-    sphere.setAttribute("metalness", "0.7");
-    sphere.setAttribute("scale", "20 20 20");
-    // this.el.appendChild(sphere);
+    this.el.addEventListener("object3dset", () => {
+      new THREE.Box3().setFromObject(this.el.object3D, true).getSize(this.box);
+    });
+
     this.setRandomPosition();
     this.nextShotTime = this.createNextShotTime();
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
@@ -47,17 +46,20 @@ AFRAME.registerComponent("target", {
       this.el.object3D.position.add(vector);
     }
 
-    const rotation = this.getBulletPosAndRotToPlayer()[1];
-    const turnAround = new THREE.Quaternion();
-    turnAround.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
-    rotation.multiply(turnAround);
-    this.el.object3D.rotation.setFromQuaternion(rotation);
+    {
+      // Rotate towards player
+      const targetRotation = this.getBulletPosAndRotToPlayer()[1];
+      targetRotation.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+      // Slow rotate to player
+      const newRotation = new THREE.Quaternion().setFromEuler(this.el.object3D.rotation);
+      newRotation.slerp(targetRotation, 0.01);
+      this.el.object3D.rotation.setFromQuaternion(newRotation);
+    }
 
     // Shot towards player
     if (new Date().getTime() > this.nextShotTime) {
       this.createBullet();
       this.nextShotTime = this.createNextShotTime();
-      // this.nextShotTime = new Date().getTime() * 3600 * 1000;
     }
   },
 
@@ -70,22 +72,26 @@ AFRAME.registerComponent("target", {
     this.moveSpeed = Math.random() / 1000;
   },
 
-  detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {
-    const line = new THREE.Line3(bulletPrevPosition, bulletPosition);
-    const closestPoint = new THREE.Vector3();
-    line.closestPointToPoint(this.el.object3D.position, true, closestPoint);
-    const distance = closestPoint.distanceTo(this.el.object3D.position);
-    // console.log(distance);
+  // detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {
+  //   const line = new THREE.Line3(bulletPrevPosition, bulletPosition);
+  //   const closestPoint = new THREE.Vector3();
+  //   line.closestPointToPoint(this.el.object3D.position, true, closestPoint);
+  //   const distance = closestPoint.distanceTo(this.el.object3D.position);
+  // console.log(distance);
 
-    if (distance < width / 2) {
-      this.setRandomPosition();
-      const scene = document.querySelector("a-scene")!;
-      scene.components.game.targetHit();
-    }
+  //TODO: BF: detekce
+  // if (distance < width / 2) {
+  // this.targetHit();
+  // }
+  // },
+
+  targetHit(this: TargetComponent) {
+    this.setRandomPosition();
+    const scene = document.querySelector("a-scene")!;
+    scene.components.game.targetHit();
   },
 
   createNextShotTime(): number {
-    // Shot every 3-8 seconds
     return new Date().getTime() + (5 + Math.random() * 5) * 1000;
   },
 
@@ -100,7 +106,7 @@ AFRAME.registerComponent("target", {
       const randomizer = new THREE.Vector3((Math.random() - 0.5) / dispersion, (Math.random() - 0.5) / dispersion, 1).normalize();
       direction.multiply(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), randomizer));
 
-      const bullet = document.createElement("a-sphere");
+      const bullet = document.createElement("a-entity");
       bullet.setAttribute("bullet", { direction, speed: 0.003 });
       bullet.setAttribute("position", position);
 
@@ -130,7 +136,7 @@ AFRAME.registerComponent("target", {
       .copy(this.el.object3D.position)
       .sub(camera?.object3D.position)
       .negate()
-      .setLength(width / 2 + 0.1);
+      .setLength(this.box.z / 2 + 0.1);
 
     const bulletPosition = new THREE.Vector3();
     bulletPosition.copy(this.el.object3D.position);

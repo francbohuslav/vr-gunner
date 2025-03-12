@@ -103,7 +103,6 @@ AFRAME.registerComponent("game", {
   },
 
   updateLives(this: GameComponent) {
-    console.log("updateLives", this.lives);
     for (let i = 1; i <= 3; i++) {
       document.getElementById("life-" + i)?.setAttribute("visible", (i <= this.lives).toString());
     }
