@@ -21,6 +21,12 @@ if (root && config.splash) {
   );
 }
 
+const scene = document.querySelector("a-scene");
+if (config.debug) {
+  scene?.setAttribute("stats", "");
+  scene?.setAttribute("inspector", "url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js");
+}
+
 function App() {
   function handleEnterVr(e: MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
@@ -39,5 +45,3 @@ function App() {
     </div>
   );
 }
-
-

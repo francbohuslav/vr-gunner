@@ -21,6 +21,9 @@ AFRAME.registerComponent("target", {
 
   init: function (this: TargetComponent) {
     this.el.setAttribute("id", "target");
+    // this.el.setAttribute("obb-collider", "centerModel: true"); 
+    this.el.setAttribute("mixin", "mixin-target");
+
     const sphere = document.createElement("a-sphere");
     sphere.setAttribute("color", "red");
     sphere.setAttribute("radius", width / 2);
