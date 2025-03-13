@@ -11,6 +11,7 @@
     <a-scene game obb-collider="showColliders: false">
       <a-assets style="opacity: 0">
         <img id="gun-texture" src="./assets/gun.jpg" />
+        <img id="choise-texture" src="./assets/choise.jpg" />
         <img id="life-texture" src="./assets/heart.png" />
         <a-mixin id="mixin-hearth" geometry="primitive: plane" scale="0.1 0.1 0.1" material="src: #life-texture; transparent: true; shader: flat"></a-mixin>
         <a-asset-item id="gun-model" src="./assets/gun.obj"></a-asset-item>
@@ -48,6 +49,9 @@
           </a-entity>
         </a-camera>
       </a-entity>
+
+      <a-entity id="bonuser" bonuser position="0 1.6 -2.1"></a-entity>
+
 
       <!-- <a-entity make-gun-visible-debug="leftGun: false">
         <a-entity meta-touch-controls="hand: right; model: false" gun="gunPosition: #right-gun-position">

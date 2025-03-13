@@ -12,7 +12,7 @@ interface GameComponent extends Component {
 
   startNextLevel(): string;
   hideTarget(): void;
-  targetHit(): void;
+  targetHit(): Promise<void>;
   playerHit(): void;
   updateMessage(): void;
   updateLives(): void;
@@ -48,11 +48,15 @@ AFRAME.registerComponent("game", {
     this.updateMessage();
   },
 
-  targetHit(this: GameComponent) {
+  async targetHit(this: GameComponent) {
     this.enemiesKilled++;
     if (this.enemiesKilled === targetsPerRound) {
       this.gameState = "pauseBetweenLevels";
       this.hideTarget();
+      this.updateMessage();
+      const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
+      const bonus = await bonuser.components.bonuser.chooseBonus();
+      console.log(bonus);
     }
     this.updateMessage();
   },
