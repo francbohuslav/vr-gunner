@@ -1,14 +1,14 @@
 import AFRAME, { Component } from "aframe";
+import runSettings from "../run-settings";
 
 const targetsPerRound = 5;
 const startLives = 3;
 
 interface GameComponent extends Component {
-  gameState: "beforeStart" | "running" | "pauseBetweenLevels" | "killed";
+  gameState: "beforeStart" | "running" | "chooseBonus" | "pauseBetweenLevels" | "killed";
   /** How many targets have been hit */
   enemiesKilled: number;
   lives: number;
-  level: number;
 
   startNextLevel(): string;
   hideTarget(): void;
@@ -16,6 +16,7 @@ interface GameComponent extends Component {
   playerHit(): void;
   updateMessage(): void;
   updateLives(): void;
+  drawSettings(): void;
 }
 
 AFRAME.registerComponent("game", {
@@ -33,16 +34,18 @@ AFRAME.registerComponent("game", {
   startNextLevel(this: GameComponent) {
     if (this.lives === 0) {
       this.lives = startLives;
-      this.level = 0;
+      runSettings.reset();
+    } else {
+      runSettings.nextLevel();
     }
-    this.level++;
+    this.drawSettings();
     this.gameState = "running";
     this.enemiesKilled = 0;
 
     const scene = document.querySelector("a-scene")!;
     const target = document.createElement("a-entity");
 
-    target.setAttribute("target", { level: this.level });
+    target.setAttribute("target", {});
     scene.appendChild(target);
     this.updateLives();
     this.updateMessage();
@@ -51,12 +54,17 @@ AFRAME.registerComponent("game", {
   async targetHit(this: GameComponent) {
     this.enemiesKilled++;
     if (this.enemiesKilled === targetsPerRound) {
-      this.gameState = "pauseBetweenLevels";
       this.hideTarget();
+
+      this.gameState = "chooseBonus";
       this.updateMessage();
       const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
       const bonus = await bonuser.components.bonuser.chooseBonus();
-      console.log(bonus);
+      bonus.modify();
+      this.drawSettings();
+
+      this.gameState = "pauseBetweenLevels";
+      this.updateMessage();
     }
     this.updateMessage();
   },
@@ -79,14 +87,31 @@ AFRAME.registerComponent("game", {
     target?.parentNode?.removeChild(document.getElementById("target")!);
   },
 
+  drawSettings(this: GameComponent) {
+    const settings = runSettings.current;
+    const text = [
+      `Level: ${settings.level}`,
+      `Shot after start delay: ${settings.targetShotAfterStartDelay.toFixed(2)}`,
+      `Shot delay: ${settings.targetShotDelay.toFixed(2)}`,
+      `Move speed: ${(settings.targetMoveSpeed * 1000).toFixed(2)}`,
+      `Bullet speed: ${(settings.targetBulletSpeed * 1000).toFixed(2)}`,
+      `IsMobile: ${AFRAME.utils.device.isMobile()}`,
+    ];
+
+    document.getElementById("text-console")?.setAttribute("value", text.join("\n"));
+  },
+
   updateMessage(this: GameComponent) {
     let text = "";
     switch (this.gameState) {
       case "killed":
         text = `Zemrel jsi, salate.\nZmackni (A) pro zacatek hry.`;
         break;
+      case "chooseBonus":
+        text = `Vyber bonus.`;
+        break;
       case "pauseBetweenLevels":
-        text = `Konec kola.\nZmackni (A) pro dalsiho kolo.`;
+        text = `Zmackni (A) pro dalsiho kolo.`;
         break;
       case "beforeStart":
         text = `Musis sestrelit ${targetsPerRound} cilu.\nZmackni (A) pro zacatek hry.`;

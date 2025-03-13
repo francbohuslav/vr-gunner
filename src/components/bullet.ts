@@ -22,12 +22,14 @@ AFRAME.registerComponent("bullet", {
   schema: {
     direction: { type: "vec4" },
     speed: { type: "number", default: defaultSpeed },
+    color: { type: "color", default: "#ffbd4a" },
+    size: { type: "number", default: 0.005 },
   },
 
   init: function (this: BulletComponent) {
     this.bulletId = ++bulletCounter;
-    this.el.setAttribute("geometry", "primitive: sphere; radius: 0.005; segmentsWidth: 8; segmentsHeight: 4");
-    this.el.setAttribute("material", "color: #ffbd4a; metalness: 0.3");
+    this.el.setAttribute("geometry", `primitive: sphere; radius: ${this.data.size}; segmentsWidth: 8; segmentsHeight: 4`);
+    this.el.setAttribute("material", `color: ${this.data.color}; metalness: 0.3`);
     this.el.setAttribute("obb-collider", "");
 
     this.el.object3D.setRotationFromQuaternion(this.data.direction);
@@ -37,11 +39,11 @@ AFRAME.registerComponent("bullet", {
     this.trail = document.createElement("a-box");
     const trail = this.trail;
 
-    trail.setAttribute("width", "0.003");
-    trail.setAttribute("height", "0.003");
+    trail.setAttribute("width", this.data.size);
+    trail.setAttribute("height", this.data.size);
     trail.setAttribute("depth", "0");
-    trail.setAttribute("color", "#FFFF99");
-    trail.setAttribute("material", "opacity: 0.5; shader: flat");
+    trail.setAttribute("color", this.data.color);
+    trail.setAttribute("material", "opacity: 0.3; shader: flat");
     this.el.appendChild(trail);
 
     const timeToLive = maxDistance / this.data.speed / 1000;

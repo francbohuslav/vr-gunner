@@ -1,8 +1,8 @@
 import AFRAME, { Component } from "aframe";
-import { BonusBase } from "../bonuses";
+import { allBonuses, IBonus } from "../bonuses";
 
 interface BonuserComponent extends Component {
-  chooseBonus(): Promise<BonusBase>;
+  chooseBonus(): Promise<IBonus>;
 }
 
 AFRAME.registerComponent("bonuser", {
@@ -10,8 +10,8 @@ AFRAME.registerComponent("bonuser", {
 
   init() {},
 
-  chooseBonus(): Promise<BonusBase> {
-    return new Promise<BonusBase>((resolve) => {
+  chooseBonus(): Promise<IBonus> {
+    return new Promise<IBonus>((resolve) => {
       const camera = document.getElementById("camera") as AFRAME.Entity;
 
       const cursor = document.createElement("a-cursor");
@@ -22,20 +22,20 @@ AFRAME.registerComponent("bonuser", {
 
       camera.appendChild(cursor);
 
-      this.createChoices(cursor, resolve, ["ahjp", "nazdar", "cest"]);
+      this.createChoices(cursor, resolve, allBonuses);
     });
   },
 
-  createChoices(cursor: AFRAME.Entity, resolveFunc: (ret: BonusBase) => void, choices: string[]) {
-    for (let index = 0; index < choices.length; index++) {
-      const choice = choices[index];
+  createChoices(cursor: AFRAME.Entity, resolveFunc: (ret: IBonus) => void, bonuses: IBonus[]) {
+    for (let index = 0; index < bonuses.length; index++) {
+      const bonus = bonuses[index];
       const plane = document.createElement("a-plane");
       plane.setAttribute("side", "double");
       plane.setAttribute("src", "#choise-texture");
       plane.setAttribute("width", "0.8");
       plane.setAttribute("height", "0.42");
       plane.setAttribute("class", "choise");
-      plane.setAttribute("position", `${(index - (choices.length - 1) / 2) * 0.9} 0 0`);
+      plane.setAttribute("position", `${(index - (bonuses.length - 1) / 2) * 0.9} 0 0`);
 
       plane.addEventListener("click", () => {
         cursor.parentNode?.removeChild(cursor);
@@ -44,7 +44,7 @@ AFRAME.registerComponent("bonuser", {
         for (const child of children) {
           parent.removeChild(child);
         }
-        resolveFunc(choice);
+        resolveFunc(bonus);
       });
 
       const textShadow = document.createElement("a-text");
@@ -52,7 +52,7 @@ AFRAME.registerComponent("bonuser", {
       textShadow.setAttribute("width", "0.7");
       textShadow.setAttribute("wrap-count", "20");
       textShadow.setAttribute("color", "black");
-      textShadow.setAttribute("value", choice);
+      textShadow.setAttribute("value", bonus.name);
       textShadow.setAttribute("position", "0.002 -0.002 0");
       plane.appendChild(textShadow);
 
@@ -62,7 +62,7 @@ AFRAME.registerComponent("bonuser", {
       text.setAttribute("width", "0.7");
       text.setAttribute("wrap-count", "20");
       text.setAttribute("color", "white");
-      text.setAttribute("value", choice);
+      text.setAttribute("value", bonus.name);
       plane.appendChild(text);
 
       this.el.appendChild(plane);

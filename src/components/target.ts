@@ -1,30 +1,24 @@
 import AFRAME, { Component } from "aframe";
+import runSettings from "../run-settings";
 const THREE = AFRAME.THREE;
 
 interface TargetComponent extends Component {
-  setRandomPosition(): void;
+  setNewTarget(): void;
   createFirstShotTime(): number;
   createNextShotTime(): number;
   createBullet(): void;
   // detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
   getBulletPosAndRotToPlayer(): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion];
   targetHit(): void;
-  interpolateValue(startValue: number, valueIn10thLevel: number): number;
 
   moveLeft: boolean;
-  moveSpeed: number;
-  shotAfterStartDelay: number;
-  shotDelay: number;
   nextShotTime: number;
-  bulletSpeed: number;
   gunshotSoundPreload: HTMLAudioElement;
   box: AFRAME.THREE.Vector3;
 }
 
 AFRAME.registerComponent("target", {
-  schema: {
-    level: { type: "number", default: 1 },
-  },
+  schema: {},
 
   init: function (this: TargetComponent) {
     this.el.setAttribute("id", "target");
@@ -36,8 +30,7 @@ AFRAME.registerComponent("target", {
       new THREE.Box3().setFromObject(this.el.object3D, true).getSize(this.box);
     });
 
-    this.setRandomPosition();
-    this.nextShotTime = this.createFirstShotTime();
+    this.setNewTarget();
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
 
@@ -49,7 +42,7 @@ AFRAME.registerComponent("target", {
       const rotation = new THREE.Quaternion();
       rotation.setFromAxisAngle(new THREE.Vector3(0, this.moveLeft ? 1 : -1, 0), Math.PI / 2);
       vector.applyQuaternion(rotation);
-      vector.setLength(timeDelta * this.moveSpeed);
+      vector.setLength(timeDelta * runSettings.current.targetMoveSpeed);
       this.el.object3D.position.add(vector);
     }
 
@@ -68,26 +61,13 @@ AFRAME.registerComponent("target", {
     }
   },
 
-  setRandomPosition(this: TargetComponent) {
+  setNewTarget(this: TargetComponent) {
     const z = -(Math.random() * 15 + 5);
     const x = (Math.random() * 15 + 5) * (Math.random() > 0.5 ? 1 : -1);
     const y = Math.random() * 10 + 0.25;
     this.el.object3D.position.set(x, y, z);
     this.moveLeft = Math.random() > 0.5;
-    this.moveSpeed = this.interpolateValue(0.0002, 0.005);
-    this.shotAfterStartDelay = Math.max(0, 5.5 - 0.5 * this.data.level);
-    this.shotDelay = Math.max(1, 5.4 - 0.4 * this.data.level);
-    this.bulletSpeed = this.interpolateValue(0.003, 0.02);
-    const text = [
-      `Level: ${this.data.level}`,
-      `Shot after start delay: ${this.shotAfterStartDelay.toFixed(2)}`,
-      `Shot delay: ${this.shotDelay.toFixed(2)}`,
-      `Move speed: ${(this.moveSpeed * 1000).toFixed(2)}`,
-      `Bullet speed: ${(this.bulletSpeed * 1000).toFixed(2)}`,
-      `IsMobile: ${AFRAME.utils.device.isMobile()}`,
-    ];
-
-    document.getElementById("text-console")?.setAttribute("value", text.join("\n"));
+    this.nextShotTime = this.createFirstShotTime();
   },
 
   // detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {
@@ -104,17 +84,17 @@ AFRAME.registerComponent("target", {
   // },
 
   targetHit(this: TargetComponent) {
-    this.setRandomPosition();
+    this.setNewTarget();
     const scene = document.querySelector("a-scene")!;
     scene.components.game.targetHit();
   },
 
   createFirstShotTime(this: TargetComponent): number {
-    return new Date().getTime() + (this.shotAfterStartDelay + Math.random() * this.shotAfterStartDelay) * 1000;
+    return new Date().getTime() + (runSettings.current.targetShotAfterStartDelay + Math.random() * runSettings.current.targetShotAfterStartDelay) * 1000;
   },
 
   createNextShotTime(this: TargetComponent): number {
-    return new Date().getTime() + (this.shotDelay + Math.random() * this.shotDelay) * 1000;
+    return new Date().getTime() + (runSettings.current.targetShotDelay + Math.random() * runSettings.current.targetShotDelay) * 1000;
   },
 
   createBullet(this: TargetComponent) {
@@ -129,7 +109,7 @@ AFRAME.registerComponent("target", {
       direction.multiply(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), randomizer));
 
       const bullet = document.createElement("a-entity");
-      bullet.setAttribute("bullet", { direction, speed: this.bulletSpeed });
+      bullet.setAttribute("bullet", { direction, speed: runSettings.current.targetBulletSpeed, color: "#FF0000", size: 0.03 });
       bullet.setAttribute("position", position);
 
       const shotSound = document.createElement("audio");
@@ -168,12 +148,6 @@ AFRAME.registerComponent("target", {
     let direction = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, -1), directionAroundY);
     direction = new THREE.Quaternion().setFromUnitVectors(directionAroundY, offsetTowardsPlayer.normalize()).multiply(direction);
     return [bulletPosition, direction];
-  },
-
-  interpolateValue(this: TargetComponent, startValue: number, valueIn10thLevel: number): number {
-    const growCoef = Math.pow(valueIn10thLevel / startValue, 1 / (10 - 1));
-    const value = startValue * Math.pow(growCoef, this.data.level - 1);
-    return value;
   },
 });
 
