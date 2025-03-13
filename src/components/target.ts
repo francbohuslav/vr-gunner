@@ -58,9 +58,7 @@ AFRAME.registerComponent("target", {
       const targetRotation = this.getBulletPosAndRotToPlayer()[1];
       targetRotation.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
       // Slow rotate to player
-      const newRotation = new THREE.Quaternion().setFromEuler(this.el.object3D.rotation);
-      newRotation.slerp(targetRotation, 0.01);
-      this.el.object3D.rotation.setFromQuaternion(newRotation);
+      this.el.object3D.quaternion.slerp(targetRotation, 0.01);
     }
 
     // Shot towards player

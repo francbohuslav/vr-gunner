@@ -32,6 +32,14 @@ AFRAME.registerComponent("player", {
       return false;
     }
   },
+
+  tick() {
+    if (AFRAME.utils.device.isMobile() && Math.abs(this.el.object3D.rotation.z) > 0.05) {
+      const rotationAroundY = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.el.object3D.rotation.y);
+      const stepSide = new THREE.Vector3(-this.el.object3D.rotation.z / 10, 0, 0).applyQuaternion(rotationAroundY);
+      this.el.object3D.position.add(stepSide);
+    }
+  },
 });
 
 declare module "aframe" {
