@@ -4,7 +4,7 @@ const THREE = AFRAME.THREE;
 interface GunComponent extends Component {
   gunshotSoundPreload: HTMLAudioElement;
   createBullet: () => void;
-  startRound: () => void;
+  startNextLevel: () => void;
 }
 
 AFRAME.registerComponent("gun", {
@@ -13,21 +13,22 @@ AFRAME.registerComponent("gun", {
   },
 
   init: function (this: GunComponent) {
-    //TODO: BF: DEBUG android
-    document.body.addEventListener("mousedown", () => {
-      const scene = document.querySelector("a-scene")!;
-      const game = scene.components.game;
-      if (game.round.isRunning) {
-        this.createBullet();
-      } else {
-        this.startRound();
-      }
-    });
-    this.el.addEventListener("abuttondown", this.startRound.bind(this));
+    if (AFRAME.utils.device.isMobile()) {
+      document.body.addEventListener("mousedown", () => {
+        const scene = document.querySelector("a-scene")!;
+        const game = scene.components.game;
+        if (game.gameState !== "running") {
+          this.startNextLevel();
+        } else {
+          this.createBullet();
+        }
+      });
+    }
+    this.el.addEventListener("abuttondown", this.startNextLevel.bind(this));
     this.el.addEventListener("triggerdown", this.createBullet.bind(this));
     document.body.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        this.startRound();
+        this.startNextLevel();
       }
       if (e.key === " ") {
         this.createBullet();
@@ -36,11 +37,11 @@ AFRAME.registerComponent("gun", {
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
 
-  startRound() {
+  startNextLevel() {
     const scene = document.querySelector("a-scene")!;
     const game = scene.components.game;
-    if (!game.round.isRunning) {
-      game.startRound();
+    if (game.gameState !== "running") {
+      game.startNextLevel();
     }
   },
 
@@ -73,14 +74,8 @@ AFRAME.registerComponent("gun", {
       scene.appendChild(bullet);
     } catch (ex) {
       if (ex instanceof Error) {
-        document.getElementById("text-score")?.setAttribute("value", ex.message);
+        document.getElementById("text-message")?.setAttribute("value", ex.message);
       }
     }
-  },
-
-  tick: function () {
-    // const quaternion = new THREE.Quaternion();
-    // this.el.object3D.getWorldQuaternion(quaternion);
-    // document.getElementById("text-score")?.setAttribute("value", JSON.stringify(quaternion));
   },
 });

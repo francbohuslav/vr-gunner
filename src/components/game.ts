@@ -4,112 +4,103 @@ const targetsPerRound = 5;
 const startLives = 3;
 
 interface GameComponent extends Component {
-  round: {
-    isRunning: boolean;
-    startTime: number;
-    /** How many targets have been hit */
-    impactCount: number;
-  };
-  startRound(): string;
-  stopRound(): void;
-  getTimeString(): string;
+  gameState: "beforeStart" | "running" | "pauseBetweenLevels" | "killed";
+  /** How many targets have been hit */
+  enemiesKilled: number;
+  lives: number;
+  level: number;
+
+  startNextLevel(): string;
+  hideTarget(): void;
   targetHit(): void;
   playerHit(): void;
   updateMessage(): void;
   updateLives(): void;
-  lives: number;
 }
 
 AFRAME.registerComponent("game", {
   schema: {},
 
   init: function (this: GameComponent) {
-    this.round = {
-      isRunning: false,
-      impactCount: 0,
-      startTime: 0,
-    };
-    this.lives = startLives;
+    this.gameState = "beforeStart";
+    this.enemiesKilled = 0;
+    this.lives = 0;
 
     this.updateLives();
     this.updateMessage();
   },
 
-  startRound(this: GameComponent) {
-    this.round = {
-      isRunning: true,
-      impactCount: 0,
-      startTime: new Date().getTime(),
-    };
-    this.lives = startLives;
+  startNextLevel(this: GameComponent) {
+    if (this.lives === 0) {
+      this.lives = startLives;
+      this.level = 0;
+    }
+    this.level++;
+    this.gameState = "running";
+    this.enemiesKilled = 0;
 
     const scene = document.querySelector("a-scene")!;
     const target = document.createElement("a-entity");
 
-    target.setAttribute("target", {});
+    target.setAttribute("target", { level: this.level });
     scene.appendChild(target);
     this.updateLives();
     this.updateMessage();
   },
 
   targetHit(this: GameComponent) {
-    const round = this.round;
-    round.impactCount++;
-    if (round.impactCount === targetsPerRound) {
-      this.stopRound();
+    this.enemiesKilled++;
+    if (this.enemiesKilled === targetsPerRound) {
+      this.gameState = "pauseBetweenLevels";
+      this.hideTarget();
     }
     this.updateMessage();
   },
 
   playerHit(this: GameComponent) {
-    if (!this.round.isRunning) {
+    if (this.gameState !== "running") {
       return;
     }
     this.lives -= 1;
     if (this.lives === 0) {
-      this.stopRound();
+      this.gameState = "killed";
+      this.hideTarget();
     }
     this.updateLives();
     this.updateMessage();
   },
 
-  stopRound(this: GameComponent) {
-    const round = this.round;
-    round.isRunning = false;
+  hideTarget(this: GameComponent) {
     const target = document.getElementById("target");
     target?.parentNode?.removeChild(document.getElementById("target")!);
   },
 
   updateMessage(this: GameComponent) {
     let text = "";
-    const round = this.round;
-    if (!round.isRunning) {
-      if (this.lives === 0) {
-        text = "Zemrel jsi, salate.";
-      } else if (round.impactCount === 0) {
-        text = `Musis sestrelit ${targetsPerRound} cilu.`;
-      } else {
-        text = `Konec hry, tvuj cas je ${this.getTimeString()} sekund.`;
-      }
-      text += `\nZmackni (A) pro zacatek hry.`;
-    } else {
-      if (round.impactCount === 0) {
-        text = "Hrajes, strilej!!!";
-      } else {
-        text = `${round.impactCount}/${targetsPerRound} - ${this.getTimeString()}`;
-      }
+    switch (this.gameState) {
+      case "killed":
+        text = `Zemrel jsi, salate.\nZmackni (A) pro zacatek hry.`;
+        break;
+      case "pauseBetweenLevels":
+        text = `Konec kola.\nZmackni (A) pro dalsiho kolo.`;
+        break;
+      case "beforeStart":
+        text = `Musis sestrelit ${targetsPerRound} cilu.\nZmackni (A) pro zacatek hry.`;
+        break;
+      default:
+        if (this.enemiesKilled === 0) {
+          text = "Hrajes, strilej!!!";
+        } else {
+          text = `${this.enemiesKilled}/${targetsPerRound}`;
+        }
     }
-    document.getElementById("text-score")?.setAttribute("value", text);
+    document.getElementById("text-message")?.setAttribute("value", text);
   },
 
   updateLives(this: GameComponent) {
     for (let i = 1; i <= 3; i++) {
       document.getElementById("life-" + i)?.setAttribute("visible", (i <= this.lives).toString());
     }
-  },
-
-  getTimeString(this: GameComponent) {
-    return ((new Date().getTime() - this.round.startTime) / 1000).toFixed(3);
   },
 });
 
