@@ -1,5 +1,6 @@
 import AFRAME, { Component } from "aframe";
 import { allBonuses, IBonus } from "../bonuses";
+import runSettings from "../run-settings";
 
 interface BonuserComponent extends Component {
   chooseBonus(): Promise<IBonus>;
@@ -22,7 +23,17 @@ AFRAME.registerComponent("bonuser", {
 
       camera.appendChild(cursor);
 
-      this.createChoices(cursor, resolve, allBonuses);
+      const bonuses = [...allBonuses];
+      const chosenBonuses = [] as IBonus[];
+      for (let index = 0; index < runSettings.current.bonusChoiseCount; index++) {
+        const randomIndex = Math.floor(Math.random() * bonuses.length);
+        chosenBonuses.push(bonuses.splice(randomIndex, 1)[0]);
+        if (bonuses.length === 0) {
+          break;
+        }
+      }
+
+      this.createChoices(cursor, resolve, chosenBonuses);
     });
   },
 

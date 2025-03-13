@@ -2,9 +2,7 @@ import AFRAME, { Component, Entity } from "aframe";
 const THREE = AFRAME.THREE;
 
 const maxDistance = 100;
-// const defaultSpeed = 0.1; // Max speed
 //TODO: BF: pri vysich rychlostech nebude fugovat kolize
-const defaultSpeed = 0.01;
 const maxTrailLength = 10;
 
 let bulletCounter = 0;
@@ -21,7 +19,7 @@ interface BulletComponent extends Component {
 AFRAME.registerComponent("bullet", {
   schema: {
     direction: { type: "vec4" },
-    speed: { type: "number", default: defaultSpeed },
+    speed: { type: "number" },
     color: { type: "color", default: "#ffbd4a" },
     size: { type: "number", default: 0.005 },
   },

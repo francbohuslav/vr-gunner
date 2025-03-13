@@ -1,4 +1,5 @@
 import AFRAME, { Component } from "aframe";
+import runSettings from "../run-settings";
 const THREE = AFRAME.THREE;
 
 interface GunComponent extends Component {
@@ -58,7 +59,7 @@ AFRAME.registerComponent("gun", {
       this.data.gunPosition.object3D.getWorldQuaternion(direction);
 
       const bullet = document.createElement("a-entity");
-      bullet.setAttribute("bullet", { direction });
+      bullet.setAttribute("bullet", { direction, speed: runSettings.current.playerBulletSpeed });
       bullet.setAttribute("position", position);
 
       const shotSound = document.createElement("audio");

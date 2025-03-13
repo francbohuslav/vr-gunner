@@ -21,18 +21,23 @@
         <a-mixin id="mixin-target" gltf-model="#enemy-ufo-model" scale="0.05 0.05 0.05"></a-mixin>
       </a-assets>
 
-      <a-entity environment="preset: egypt; lightPosition: -10 10 10;"></a-entity>
+      <!-- none, default, contact, egypt, checkerboard, forest, goaland, yavapai, goldmine, 
+       threetowers, poison, arches, tron, japan, dream, volcano, starry, osiris, moon -->
+      <a-entity environment="preset: egypt; lightPosition: -10 10 10; "></a-entity>
 
       <!-- Camera + controllers rig -->
       <a-entity id="camera-rig">
         <!-- DEBUG FOV -->
         <a-camera id="camera" player position="0 1.6 0" fov="45">
           <a-text id="text-message" position="0 0.3 -2" value="" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
-          <a-text id="text-console" position="1.2 0.7 -2" value="" align="right" color="#000" scale="0.15 0.15 0.15"></a-text>
+          <a-text id="text-console" position="1.2 0.6 -2" value="" align="right" color="#000" scale="0.15 0.15 0.15"></a-text>
           <a-entity>
             <a-entity id="life-1" mixin="mixin-hearth" position="-0.12 -0.3 -2"></a-entity>
             <a-entity id="life-2" mixin="mixin-hearth" position="0 -0.3 -2"></a-entity>
             <a-entity id="life-3" mixin="mixin-hearth" position="0.12 -0.3 -2"></a-entity>
+            <a-entity id="life-4" mixin="mixin-hearth" position="0.24 -0.3 -2"></a-entity>
+            <a-entity id="life-5" mixin="mixin-hearth" position="0.36 -0.3 -2"></a-entity>
+            <a-entity id="life-6" mixin="mixin-hearth" position="0.48 -0.3 -2"></a-entity>
           </a-entity>
 
           <!-- DEBUG central gun -->

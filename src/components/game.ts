@@ -2,19 +2,17 @@ import AFRAME, { Component } from "aframe";
 import runSettings from "../run-settings";
 
 const targetsPerRound = 5;
-const startLives = 3;
 
 interface GameComponent extends Component {
   gameState: "beforeStart" | "running" | "chooseBonus" | "pauseBetweenLevels" | "killed";
   /** How many targets have been hit */
   enemiesKilled: number;
-  lives: number;
 
   startNextLevel(): string;
   hideTarget(): void;
   targetHit(): Promise<void>;
   playerHit(): void;
-  updateMessage(): void;
+  updateUi(): void;
   updateLives(): void;
   drawSettings(): void;
 }
@@ -25,15 +23,12 @@ AFRAME.registerComponent("game", {
   init: function (this: GameComponent) {
     this.gameState = "beforeStart";
     this.enemiesKilled = 0;
-    this.lives = 0;
 
-    this.updateLives();
-    this.updateMessage();
+    this.updateUi();
   },
 
   startNextLevel(this: GameComponent) {
-    if (this.lives === 0) {
-      this.lives = startLives;
+    if (runSettings.current.playerLives === 0) {
       runSettings.reset();
     } else {
       runSettings.nextLevel();
@@ -47,8 +42,7 @@ AFRAME.registerComponent("game", {
 
     target.setAttribute("target", {});
     scene.appendChild(target);
-    this.updateLives();
-    this.updateMessage();
+    this.updateUi();
   },
 
   async targetHit(this: GameComponent) {
@@ -57,29 +51,27 @@ AFRAME.registerComponent("game", {
       this.hideTarget();
 
       this.gameState = "chooseBonus";
-      this.updateMessage();
+      this.updateUi();
       const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
       const bonus = await bonuser.components.bonuser.chooseBonus();
       bonus.modify();
       this.drawSettings();
 
       this.gameState = "pauseBetweenLevels";
-      this.updateMessage();
     }
-    this.updateMessage();
+    this.updateUi();
   },
 
   playerHit(this: GameComponent) {
     if (this.gameState !== "running") {
       return;
     }
-    this.lives -= 1;
-    if (this.lives === 0) {
+    runSettings.current.playerLives -= 1;
+    if (runSettings.current.playerLives === 0) {
       this.gameState = "killed";
       this.hideTarget();
     }
-    this.updateLives();
-    this.updateMessage();
+    this.updateUi();
   },
 
   hideTarget(this: GameComponent) {
@@ -91,17 +83,22 @@ AFRAME.registerComponent("game", {
     const settings = runSettings.current;
     const text = [
       `Level: ${settings.level}`,
-      `Shot after start delay: ${settings.targetShotAfterStartDelay.toFixed(2)}`,
-      `Shot delay: ${settings.targetShotDelay.toFixed(2)}`,
-      `Move speed: ${(settings.targetMoveSpeed * 1000).toFixed(2)}`,
-      `Bullet speed: ${(settings.targetBulletSpeed * 1000).toFixed(2)}`,
-      `IsMobile: ${AFRAME.utils.device.isMobile()}`,
+      "",
+      `CIL`,
+      `Zpozdeni prvni strely: ${settings.targetShotAfterStartDelay.toFixed(2)}`,
+      `Cetnost strel: ${settings.targetShotDelay.toFixed(2)}`,
+      `Rychlost: ${(settings.targetMoveSpeed * 1000).toFixed(2)}`,
+      `Rychlost kulek: ${(settings.targetBulletSpeed * 1000).toFixed(2)}`,
+      `Presnost kulek: ${settings.targetDispersion.toFixed(0)}`,
+      "",
+      "HRAC",
+      `Rychlost kulek: ${(settings.playerBulletSpeed * 1000).toFixed(2)}`,
     ];
 
     document.getElementById("text-console")?.setAttribute("value", text.join("\n"));
   },
 
-  updateMessage(this: GameComponent) {
+  updateUi(this: GameComponent) {
     let text = "";
     switch (this.gameState) {
       case "killed":
@@ -124,11 +121,9 @@ AFRAME.registerComponent("game", {
         }
     }
     document.getElementById("text-message")?.setAttribute("value", text);
-  },
-
-  updateLives(this: GameComponent) {
-    for (let i = 1; i <= 3; i++) {
-      document.getElementById("life-" + i)?.setAttribute("visible", (i <= this.lives).toString());
+    for (let i = 1; i <= 6; i++) {
+      //TODO: BF: udelat i vice zivotu
+      document.getElementById("life-" + i)?.setAttribute("visible", (i <= runSettings.current.playerLives).toString());
     }
   },
 });

@@ -4,7 +4,13 @@ export interface IRunSettings {
   targetBulletSpeed: number;
   targetShotDelay: number;
   targetShotAfterStartDelay: number;
+  targetDispersion: number;
+  playerBulletSpeed: number;
+  playerLives: number;
+  bonusChoiseCount: number;
 }
+
+//TODO: BF: enemaky asi umiraji kvuli vlastnim strelam...asi udelame ze fakt kazda kulka je urcna pro nekoho
 
 export const defaultRunSettings: IRunSettings = {
   level: 1,
@@ -12,6 +18,10 @@ export const defaultRunSettings: IRunSettings = {
   targetBulletSpeed: 0.003,
   targetShotDelay: 5,
   targetShotAfterStartDelay: 5,
+  targetDispersion: 25,
+  playerBulletSpeed: 0.005,
+  playerLives: 3,
+  bonusChoiseCount: 3,
 };
 
 class RunSettings {
@@ -26,7 +36,8 @@ class RunSettings {
     this.current.targetMoveSpeed = this.interpolateValue(this.current.targetMoveSpeed, defaultRunSettings.targetMoveSpeed, 0.005);
     this.current.targetBulletSpeed = this.interpolateValue(this.current.targetBulletSpeed, defaultRunSettings.targetBulletSpeed, 0.02);
     this.current.targetShotDelay = Math.max(1, this.current.targetShotDelay - 0.4);
-    this.current.targetShotAfterStartDelay = Math.max(0, this.current.targetShotAfterStartDelay - 0.5);
+    this.current.targetShotAfterStartDelay = Math.max(0.5, this.current.targetShotAfterStartDelay - 0.5);
+    this.current.targetDispersion = this.interpolateValue(this.current.targetDispersion, defaultRunSettings.targetDispersion, 200);
   }
 
   private interpolateValue(currentValue: number, startValue: number, valueIn10thLevel: number): number {

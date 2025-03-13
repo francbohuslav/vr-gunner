@@ -70,19 +70,6 @@ AFRAME.registerComponent("target", {
     this.nextShotTime = this.createFirstShotTime();
   },
 
-  // detectImpact(this: TargetComponent, bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3) {
-  //   const line = new THREE.Line3(bulletPrevPosition, bulletPosition);
-  //   const closestPoint = new THREE.Vector3();
-  //   line.closestPointToPoint(this.el.object3D.position, true, closestPoint);
-  //   const distance = closestPoint.distanceTo(this.el.object3D.position);
-  // console.log(distance);
-
-  //TODO: BF: detekce
-  // if (distance < width / 2) {
-  // this.targetHit();
-  // }
-  // },
-
   targetHit(this: TargetComponent) {
     this.setNewTarget();
     const scene = document.querySelector("a-scene")!;
@@ -104,8 +91,11 @@ AFRAME.registerComponent("target", {
       const [position, direction] = this.getBulletPosAndRotToPlayer();
 
       // How good eye has enemy. Higher = more accurate.
-      const dispersion = 25.0;
-      const randomizer = new THREE.Vector3((Math.random() - 0.5) / dispersion, (Math.random() - 0.5) / dispersion, 1).normalize();
+      const randomizer = new THREE.Vector3(
+        (Math.random() - 0.5) / runSettings.current.targetDispersion,
+        (Math.random() - 0.5) / runSettings.current.targetDispersion,
+        1
+      ).normalize();
       direction.multiply(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), randomizer));
 
       const bullet = document.createElement("a-entity");
