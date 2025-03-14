@@ -31,14 +31,7 @@
         <a-camera id="camera" player position="0 1.6 0" fov="45">
           <a-text id="text-message" position="0 0.3 -2" value="" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
           <a-text id="text-console" position="1.2 0.6 -2" value="" align="right" color="#000" scale="0.15 0.15 0.15"></a-text>
-          <a-entity>
-            <a-entity id="life-1" mixin="mixin-hearth" position="-0.12 -0.3 -2"></a-entity>
-            <a-entity id="life-2" mixin="mixin-hearth" position="0 -0.3 -2"></a-entity>
-            <a-entity id="life-3" mixin="mixin-hearth" position="0.12 -0.3 -2"></a-entity>
-            <a-entity id="life-4" mixin="mixin-hearth" position="0.24 -0.3 -2"></a-entity>
-            <a-entity id="life-5" mixin="mixin-hearth" position="0.36 -0.3 -2"></a-entity>
-            <a-entity id="life-6" mixin="mixin-hearth" position="0.48 -0.3 -2"></a-entity>
-          </a-entity>
+          <a-entity id="lives" position="-0.12 -0.3 -2"></a-entity>
 
           <!-- DEBUG central gun -->
           <a-entity visible="true" position="0 -0.03 -0.5" rotation="50.5 -6 0" gun="gunPosition: #center-gun-position">
@@ -56,7 +49,6 @@
       </a-entity>
 
       <a-entity id="bonuser" bonuser position="0 1.6 -2.1"></a-entity>
-
 
       <!-- <a-entity make-gun-visible-debug="leftGun: false">
         <a-entity meta-touch-controls="hand: right; model: false" gun="gunPosition: #right-gun-position">

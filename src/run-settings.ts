@@ -10,8 +10,6 @@ export interface IRunSettings {
   bonusChoiseCount: number;
 }
 
-//TODO: BF: enemaky asi umiraji kvuli vlastnim strelam...asi udelame ze fakt kazda kulka je urcna pro nekoho
-
 export const defaultRunSettings: IRunSettings = {
   level: 1,
   targetMoveSpeed: 0.0002,

@@ -14,7 +14,7 @@ interface TargetComponent extends Component {
   moveLeft: boolean;
   nextShotTime: number;
   gunshotSoundPreload: HTMLAudioElement;
-  box: AFRAME.THREE.Vector3;
+  // box: AFRAME.THREE.Vector3;
 }
 
 AFRAME.registerComponent("target", {
@@ -24,11 +24,11 @@ AFRAME.registerComponent("target", {
     this.el.setAttribute("id", "target");
     this.el.setAttribute("obb-collider", "centerModel: true");
     this.el.setAttribute("mixin", "mixin-target");
-    this.box = new THREE.Vector3();
+    // this.box = new THREE.Vector3();
 
-    this.el.addEventListener("object3dset", () => {
-      new THREE.Box3().setFromObject(this.el.object3D, true).getSize(this.box);
-    });
+    // this.el.addEventListener("object3dset", () => {
+    //   new THREE.Box3().setFromObject(this.el.object3D, true).getSize(this.box);
+    // });
 
     this.setNewTarget();
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
@@ -124,11 +124,7 @@ AFRAME.registerComponent("target", {
     const camera = document.getElementById("camera") as AFRAME.Entity;
 
     const offsetTowardsPlayer = new THREE.Vector3();
-    offsetTowardsPlayer
-      .copy(this.el.object3D.position)
-      .sub(camera?.object3D.position)
-      .negate()
-      .setLength(this.box.z / 2 + 0.1);
+    offsetTowardsPlayer.copy(this.el.object3D.position).sub(camera?.object3D.position).negate().setLength(0.1);
 
     const bulletPosition = new THREE.Vector3();
     bulletPosition.copy(this.el.object3D.position);

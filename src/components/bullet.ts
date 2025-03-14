@@ -20,6 +20,7 @@ AFRAME.registerComponent("bullet", {
   schema: {
     direction: { type: "vec4" },
     speed: { type: "number" },
+    fromPlayer: { type: "boolean" },
     color: { type: "color", default: "#ffbd4a" },
     size: { type: "number", default: 0.005 },
   },
@@ -73,7 +74,7 @@ AFRAME.registerComponent("bullet", {
     // target?.components.target.detectImpact(positionBefore, bullet.object3D.position);
 
     const camera = document.getElementById("camera") as Entity;
-    if (camera.components.player.detectImpact(positionBefore, bullet.object3D.position)) {
+    if (!this.data.fromPlayer && camera.components.player.detectImpact(positionBefore, bullet.object3D.position)) {
       this.removeBullet();
       return;
     }
@@ -81,10 +82,9 @@ AFRAME.registerComponent("bullet", {
 
   processCollision(e: CustomEvent<{ withEl: AFRAME.Entity }>) {
     const entity = e.detail.withEl;
-    if (entity.id !== "target") {
-      return;
+    if (entity.id === "target" && this.data.fromPlayer) {
+      e.detail.withEl.components.target.targetHit();
     }
-    e.detail.withEl.components.target.targetHit();
   },
 
   removeBullet() {

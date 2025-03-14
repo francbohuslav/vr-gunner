@@ -41,7 +41,7 @@ AFRAME.registerComponent("gun", {
   startNextLevel() {
     const scene = document.querySelector("a-scene")!;
     const game = scene.components.game;
-    if (game.gameState !== "running") {
+    if (["killed", "beforeStart", "pauseBetweenLevels"].includes(game.gameState)) {
       game.startNextLevel();
     }
   },
@@ -59,7 +59,11 @@ AFRAME.registerComponent("gun", {
       this.data.gunPosition.object3D.getWorldQuaternion(direction);
 
       const bullet = document.createElement("a-entity");
-      bullet.setAttribute("bullet", { direction, speed: runSettings.current.playerBulletSpeed });
+      bullet.setAttribute("bullet", {
+        direction,
+        speed: runSettings.current.playerBulletSpeed,
+        fromPlayer: true,
+      });
       bullet.setAttribute("position", position);
 
       const shotSound = document.createElement("audio");

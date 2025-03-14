@@ -121,9 +121,21 @@ AFRAME.registerComponent("game", {
         }
     }
     document.getElementById("text-message")?.setAttribute("value", text);
-    for (let i = 1; i <= 6; i++) {
-      //TODO: BF: udelat i vice zivotu
-      document.getElementById("life-" + i)?.setAttribute("visible", (i <= runSettings.current.playerLives).toString());
+
+    {
+      const livesCont = document.getElementById("lives") as AFRAME.Entity;
+      if (livesCont.childNodes.length != runSettings.current.playerLives) {
+        while (livesCont.firstChild) {
+          livesCont.removeChild(livesCont.firstChild);
+        }
+
+        for (let i = 1; i <= runSettings.current.playerLives; i++) {
+          const life = document.createElement("a-entity");
+          life.setAttribute("mixin", "mixin-hearth");
+          life.setAttribute("position", `${(i - (runSettings.current.playerLives - 1) / 2) * 0.12} 0 0`);
+          livesCont.appendChild(life);
+        }
+      }
     }
   },
 });
