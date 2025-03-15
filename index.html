@@ -31,53 +31,12 @@
         <a-camera id="camera" player position="0 1.6 0" fov="45">
           <a-text id="text-message" position="0 0.3 -2" value="" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
           <a-text id="text-console" position="1.2 0.6 -2" value="" align="right" color="#000" scale="0.15 0.15 0.15"></a-text>
-          <a-entity id="lives" position="-0.12 -0.3 -2"></a-entity>
-
-          <!-- DEBUG central gun -->
-          <a-entity visible="true" position="0 -0.03 -0.5" rotation="50.5 -6 0" gun="gunPosition: #center-gun-position">
-            <a-entity rotation="-52 0 0">
-              <a-entity rotation="0 0 -5">
-                <a-entity id="center-gun-position" rotation="0 6 0">
-                  <a-entity position="0 -0.02 0.1">
-                    <a-entity id="center-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.001 0.001 0.001"> </a-entity>
-                  </a-entity>
-                </a-entity>
-              </a-entity>
-            </a-entity>
-          </a-entity>
+          <a-entity id="lives"></a-entity>
+          <a-entity guns="vr: false"></a-entity>
         </a-camera>
       </a-entity>
-
+      <a-entity guns="vr: true"></a-entity>
       <a-entity id="bonuser" bonuser position="0 1.6 -2.1"></a-entity>
-
-      <!-- <a-entity make-gun-visible-debug="leftGun: false">
-        <a-entity meta-touch-controls="hand: right; model: false" gun="gunPosition: #right-gun-position">
-          <a-entity rotation="-52 0 0">
-            <a-entity rotation="0 0 -5">
-              <a-entity id="right-gun-position" rotation="0 6 0">
-                <!- - <a-box id="right-gun-placeholder" width="0.003" height="0.003" depth="0.4" color="red"></a-box> -- >
-                <a-entity position="0 -0.11 0.1">
-                  <a-entity id="right-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"></a-entity>
-                </a-entity>
-              </a-entity>
-            </a-entity>
-          </a-entity>
-        </a-entity>
-      </a-entity>
-
-      <a-entity make-gun-visible-debug="leftGun: true">
-        <a-entity meta-touch-controls="hand: left; model: false" gun="gunPosition: #left-gun-position">
-          <a-entity rotation="-52 0 0">
-            <a-entity rotation="0 0 -5">
-              <a-entity id="left-gun-position" rotation="0 -6 0">
-                <a-entity position="0 -0.11 0.1">
-                  <a-entity id="left-gun" rotation="0 90 0" obj-model="obj: #gun-model" material="src: #gun-texture" scale="0.0045 0.0045 0.0045"></a-entity>
-                </a-entity>
-              </a-entity>
-            </a-entity>
-          </a-entity>
-        </a-entity>
-      </a-entity> -->
     </a-scene>
     <script type="module" src="/src/main.tsx"></script>
   </body>

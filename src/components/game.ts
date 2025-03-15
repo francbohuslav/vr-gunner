@@ -1,5 +1,6 @@
 import AFRAME, { Component } from "aframe";
 import runSettings from "../run-settings";
+import config from "../config";
 
 const targetsPerRound = 5;
 
@@ -17,6 +18,10 @@ interface GameComponent extends Component {
   drawSettings(): void;
 }
 
+//TODO: BF: bonusy vybirat ACkem na VR
+//TODO: BF: konzoli zobrazovat pod bonusama 
+//TODO: BF: konzole pod bonusama bude zobrazovat uz stats pro dasli kolo
+
 AFRAME.registerComponent("game", {
   schema: {},
 
@@ -24,7 +29,17 @@ AFRAME.registerComponent("game", {
     this.gameState = "beforeStart";
     this.enemiesKilled = 0;
 
+    if (!config.isVR) {
+      const scene = document.querySelector("a-scene") as AFRAME.Scene;
+      scene.setAttribute("xr-mode-ui", "enabled: false");
+    }
+
+    document.getElementById("lives")?.setAttribute("position", `0 -${config.isVR ? 0.9 : 0.6} -2`);
+
     this.updateUi();
+
+    // const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
+    // bonuser.components.bonuser.chooseBonus();
   },
 
   startNextLevel(this: GameComponent) {
@@ -102,20 +117,20 @@ AFRAME.registerComponent("game", {
     let text = "";
     switch (this.gameState) {
       case "killed":
-        text = `Zemrel jsi, salate.\nZmackni (A) pro zacatek hry.`;
+        text = `Zemrel jsi, salate.\n${config.nextLevelSentence()} pro zacatek hry.`;
         break;
       case "chooseBonus":
         text = `Vyber bonus.`;
         break;
       case "pauseBetweenLevels":
-        text = `Zmackni (A) pro dalsiho kolo.`;
+        text = `${config.nextLevelSentence()} pro dalsiho kolo.`;
         break;
       case "beforeStart":
-        text = `Musis sestrelit ${targetsPerRound} cilu.\nZmackni (A) pro zacatek hry.`;
+        text = `Musis sestrelit ${targetsPerRound} cilu.\n${config.nextLevelSentence()} pro zacatek hry.`;
         break;
       default:
         if (this.enemiesKilled === 0) {
-          text = "Hrajes, strilej!!!";
+          text = `Hrajes, strilej ${config.shotSentence()}!!!`;
         } else {
           text = `${this.enemiesKilled}/${targetsPerRound}`;
         }
@@ -132,7 +147,7 @@ AFRAME.registerComponent("game", {
         for (let i = 1; i <= runSettings.current.playerLives; i++) {
           const life = document.createElement("a-entity");
           life.setAttribute("mixin", "mixin-hearth");
-          life.setAttribute("position", `${(i - (runSettings.current.playerLives - 1) / 2) * 0.12} 0 0`);
+          life.setAttribute("position", `${(i - (runSettings.current.playerLives + 1) / 2) * 0.12} 0 0`);
           livesCont.appendChild(life);
         }
       }

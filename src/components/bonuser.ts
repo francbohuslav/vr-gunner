@@ -15,11 +15,12 @@ AFRAME.registerComponent("bonuser", {
     return new Promise<IBonus>((resolve) => {
       const camera = document.getElementById("camera") as AFRAME.Entity;
 
-      const cursor = document.createElement("a-cursor");
-      cursor.setAttribute("fuse", "false");
-      cursor.setAttribute("objects", ".choise");
+      const cursor = document.createElement("a-entity");
+      cursor.setAttribute("cursor", "fuse: false");
+      cursor.setAttribute("raycaster", "objects: .choise; showLine: false;");
       cursor.setAttribute("material", "color: red; shader: flat");
-      cursor.setAttribute("geometry", "primitive: ring; radiusInner: 0.007; radiusOuter: 0.012");
+      cursor.setAttribute("geometry", "primitive: ring; radiusInner: 0.014; radiusOuter: 0.024");
+      cursor.setAttribute("position", "0 0 -2");
 
       camera.appendChild(cursor);
 

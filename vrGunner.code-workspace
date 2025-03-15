@@ -1,8 +1,34 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
+  "folders": [
+    {
+      "path": "."
+    }
   ],
-  "settings": {}
+  "settings": {
+    "deploy": {
+      "targets": [
+        {
+          "type": "ftp",
+          "name": "bogan.cz",
+          "dir": "",
+          "host": "fenek.endora.cz",
+          "port": 21,
+          "secure": false,
+          "user": "bogan",
+          "mappings": [
+            {
+              "source": "dist",
+              "target": "bogan.cz/web/vr-gunner"
+            }
+          ]
+        }
+      ],
+      "packages": [
+        {
+          "name": "Vsechno",
+          "files": ["dist/**/*.*"]
+        }
+      ]
+    }
+  }
 }

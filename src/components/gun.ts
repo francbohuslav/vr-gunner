@@ -1,5 +1,6 @@
 import AFRAME, { Component } from "aframe";
 import runSettings from "../run-settings";
+import config from "../config";
 const THREE = AFRAME.THREE;
 
 interface GunComponent extends Component {
@@ -14,7 +15,10 @@ AFRAME.registerComponent("gun", {
   },
 
   init: function (this: GunComponent) {
-    if (AFRAME.utils.device.isMobile()) {
+    this.el.addEventListener("abuttondown", this.startNextLevel.bind(this));
+    this.el.addEventListener("triggerdown", this.createBullet.bind(this));
+
+    if (config.isMobile) {
       document.body.addEventListener("mousedown", () => {
         const scene = document.querySelector("a-scene")!;
         const game = scene.components.game;
@@ -25,8 +29,7 @@ AFRAME.registerComponent("gun", {
         }
       });
     }
-    this.el.addEventListener("abuttondown", this.startNextLevel.bind(this));
-    this.el.addEventListener("triggerdown", this.createBullet.bind(this));
+
     document.body.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         this.startNextLevel();
