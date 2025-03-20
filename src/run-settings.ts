@@ -7,7 +7,7 @@ export interface IRunSettings {
   targetDispersion: number;
   playerBulletSpeed: number;
   playerLives: number;
-  bonusChoiseCount: number;
+  bonusChoiceCount: number;
 }
 
 export const defaultRunSettings: IRunSettings = {
@@ -17,9 +17,9 @@ export const defaultRunSettings: IRunSettings = {
   targetShotDelay: 5,
   targetShotAfterStartDelay: 5,
   targetDispersion: 25,
-  playerBulletSpeed: 0.005,
+  playerBulletSpeed: 0.005, // Maximum os 0.5 because of correct collision detection
   playerLives: 3,
-  bonusChoiseCount: 3,
+  bonusChoiceCount: 3,
 };
 
 class RunSettings {

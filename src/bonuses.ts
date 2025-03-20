@@ -51,7 +51,7 @@ export const allBonuses: IBonus[] = [
   {
     name: "Vice bonusu k vyberu",
     modify() {
-      runSettings.current.bonusChoiseCount++;
+      runSettings.current.bonusChoiceCount++;
     },
   },
 ];

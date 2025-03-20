@@ -99,7 +99,7 @@ AFRAME.registerComponent("target", {
       direction.multiply(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), randomizer));
 
       const bullet = document.createElement("a-entity");
-      bullet.setAttribute("bullet", { direction, speed: runSettings.current.targetBulletSpeed, color: "#FF0000", size: 0.03 });
+      bullet.setAttribute("bullet", { direction, speed: runSettings.current.targetBulletSpeed, color: "#FF0000", size: 0.06 });
       bullet.setAttribute("position", position);
 
       const shotSound = document.createElement("audio");

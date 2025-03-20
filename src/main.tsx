@@ -9,9 +9,13 @@ import "./components/game.ts";
 import "./components/bonuser.ts";
 import "./components/guns.ts";
 import "./index.css";
-import { Scene } from "aframe";
+import AFRAME, { Scene } from "aframe";
 import "aframe-environment-component";
 import config from "./config.ts";
+
+AFRAME.THREE.Vector3.prototype.toDebug = function () {
+  return `[${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)}]`;
+};
 
 const root = document.getElementById("react-root");
 if (root && config.splash) {

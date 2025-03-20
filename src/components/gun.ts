@@ -39,6 +39,10 @@ AFRAME.registerComponent("gun", {
       }
     });
     this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
+
+    // setTimeout(() => {
+    //   this.createBullet();
+    // }, 1000);
   },
 
   startNextLevel() {

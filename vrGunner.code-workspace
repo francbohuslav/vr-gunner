@@ -29,6 +29,7 @@
           "files": ["dist/**/*.*"]
         }
       ]
-    }
+    },
+    "editor.formatOnSave": true
   }
 }

@@ -26,7 +26,7 @@ AFRAME.registerComponent("bonuser", {
 
       const bonuses = [...allBonuses];
       const chosenBonuses = [] as IBonus[];
-      for (let index = 0; index < runSettings.current.bonusChoiseCount; index++) {
+      for (let index = 0; index < runSettings.current.bonusChoiceCount; index++) {
         const randomIndex = Math.floor(Math.random() * bonuses.length);
         chosenBonuses.push(bonuses.splice(randomIndex, 1)[0]);
         if (bonuses.length === 0) {
