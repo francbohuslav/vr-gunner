@@ -26,6 +26,8 @@ AFRAME.registerComponent("bonuser", {
 
       const bonuses = [...allBonuses];
       const chosenBonuses = [] as IBonus[];
+      //TODO: BF: nedavat sem bonus na rychlost kdyz uz by nic nezlepsil
+      //TODO: BF: zaridit aby neslo dat vetsi rychlost nez ta co je v komentari u hracske rychllsti
       for (let index = 0; index < runSettings.current.bonusChoiceCount; index++) {
         const randomIndex = Math.floor(Math.random() * bonuses.length);
         chosenBonuses.push(bonuses.splice(randomIndex, 1)[0]);

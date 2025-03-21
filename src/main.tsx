@@ -13,6 +13,7 @@ import AFRAME, { Scene } from "aframe";
 import "aframe-environment-component";
 import config from "./config.ts";
 
+//@ts-ignore
 AFRAME.THREE.Vector3.prototype.toDebug = function () {
   return `[${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)}]`;
 };
