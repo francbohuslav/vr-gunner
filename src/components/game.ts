@@ -43,10 +43,8 @@ AFRAME.registerComponent("game", {
   },
 
   startNextLevel(this: GameComponent) {
-    if (runSettings.current.playerLives === 0) {
+    if (["beforeStart", "killed"].includes(this.gameState)) {
       runSettings.reset();
-    } else {
-      runSettings.nextLevel();
     }
     document.getElementById("text-console")!.setAttribute("visible", "false");
 
@@ -65,6 +63,7 @@ AFRAME.registerComponent("game", {
     this.enemiesKilled++;
     if (this.enemiesKilled === targetsPerRound) {
       this.hideTarget();
+      runSettings.nextLevel();
 
       this.gameState = "chooseBonus";
       this.drawSettings();
@@ -88,6 +87,7 @@ AFRAME.registerComponent("game", {
     if (runSettings.current.playerLives === 0) {
       this.gameState = "killed";
       this.hideTarget();
+      this.drawSettings();
     }
     this.updateUi();
   },
