@@ -1,4 +1,4 @@
-//@ts-nocheck
+//@ts-nocheck not mine component
 AFRAME.registerComponent("meta-thumbstick-controls", {
   schema: {
     acceleration: { default: 45 },
@@ -32,9 +32,9 @@ AFRAME.registerComponent("meta-thumbstick-controls", {
     if (!this.el.sceneEl.is("vr-mode")) {
       return;
     }
-    var data = this.data;
-    var el = this.rigElement;
-    var velocity = this.velocity;
+    const data = this.data;
+    const el = this.rigElement;
+    const velocity = this.velocity;
     //console.log("here", this.tsData, this.tsData.length())
     if (!velocity[data.adAxis] && !velocity[data.wsAxis] && !this.tsData.length()) {
       return;
@@ -53,17 +53,14 @@ AFRAME.registerComponent("meta-thumbstick-controls", {
   },
 
   updateVelocity: function (delta) {
-    var acceleration;
-    var adAxis;
-    var adSign;
-    var data = this.data;
-    var velocity = this.velocity;
-    var wsAxis;
-    var wsSign;
+    let adSign;
+    const data = this.data;
+    const velocity = this.velocity;
+    let wsSign;
     const CLAMP_VELOCITY = 0.00001;
 
-    adAxis = data.adAxis;
-    wsAxis = data.wsAxis;
+    const adAxis = data.adAxis;
+    const wsAxis = data.wsAxis;
 
     // If FPS too low, reset velocity.
     if (delta > 0.2) {
@@ -73,7 +70,7 @@ AFRAME.registerComponent("meta-thumbstick-controls", {
     }
 
     // https://gamedev.stackexchange.com/questions/151383/frame-rate-independant-movement-with-acceleration
-    var scaledEasing = Math.pow(1 / this.easing, delta * 60);
+    const scaledEasing = Math.pow(1 / this.easing, delta * 60);
     // Velocity Easing.
     if (velocity[adAxis] !== 0) {
       velocity[adAxis] = velocity[adAxis] * scaledEasing;
@@ -95,7 +92,7 @@ AFRAME.registerComponent("meta-thumbstick-controls", {
     }
 
     // Update velocity using keys pressed.
-    acceleration = data.acceleration;
+    const acceleration = data.acceleration;
     if (data.adEnabled && this.tsData.x) {
       adSign = data.adInverted ? -1 : 1;
       velocity[adAxis] += adSign * acceleration * this.tsData.x * delta;
@@ -107,13 +104,12 @@ AFRAME.registerComponent("meta-thumbstick-controls", {
   },
 
   getMovementVector: (function () {
-    var directionVector = new THREE.Vector3(0, 0, 0);
-    var rotationEuler = new THREE.Euler(0, 0, 0, "YXZ");
+    const directionVector = new THREE.Vector3(0, 0, 0);
+    const rotationEuler = new THREE.Euler(0, 0, 0, "YXZ");
 
     return function (delta) {
-      var rotation = this.el.sceneEl.camera.el.object3D.rotation;
-      var velocity = this.velocity;
-      var xRotation;
+      const rotation = this.el.sceneEl.camera.el.object3D.rotation;
+      const velocity = this.velocity;
 
       directionVector.copy(velocity);
       directionVector.multiplyScalar(delta);
@@ -121,7 +117,7 @@ AFRAME.registerComponent("meta-thumbstick-controls", {
       if (!rotation) {
         return directionVector;
       }
-      xRotation = this.data.fly ? rotation.x : 0;
+      const xRotation = this.data.fly ? rotation.x : 0;
 
       // Transform direction relative to heading.
       rotationEuler.set(xRotation, rotation.y, 0);

@@ -3,7 +3,6 @@ export interface IRunSettings {
   targetMoveSpeed: number;
   targetBulletSpeed: number;
   targetShotDelay: number;
-  targetShotAfterStartDelay: number;
   targetDispersion: number;
   playerBulletSpeed: number;
   playerLives: number;
@@ -15,12 +14,14 @@ export const defaultRunSettings: IRunSettings = {
   targetMoveSpeed: 0.0002,
   targetBulletSpeed: 0.003,
   targetShotDelay: 5,
-  targetShotAfterStartDelay: 5,
   targetDispersion: 25,
-  playerBulletSpeed: 0.005, // Maximum os 0.5 because of correct collision detection
+  playerBulletSpeed: 0.005,
   playerLives: 3,
   bonusChoiceCount: 3,
 };
+
+// Maximum os 0.5 because of correct collision detection
+export const maxBulletSpeed = 0.5;
 
 class RunSettings {
   public current: IRunSettings = { ...defaultRunSettings };
@@ -31,11 +32,13 @@ class RunSettings {
 
   nextLevel() {
     this.current.level++;
-    this.current.targetMoveSpeed = this.interpolateValue(this.current.targetMoveSpeed, defaultRunSettings.targetMoveSpeed, 0.005);
-    this.current.targetBulletSpeed = this.interpolateValue(this.current.targetBulletSpeed, defaultRunSettings.targetBulletSpeed, 0.02);
+    this.current.targetMoveSpeed = Math.min(this.interpolateValue(this.current.targetMoveSpeed, defaultRunSettings.targetMoveSpeed, 0.005), 0.03);
+    this.current.targetBulletSpeed = Math.min(
+      this.interpolateValue(this.current.targetBulletSpeed, defaultRunSettings.targetBulletSpeed, 0.02),
+      maxBulletSpeed
+    );
     this.current.targetShotDelay = Math.max(1, this.current.targetShotDelay - 0.4);
-    this.current.targetShotAfterStartDelay = Math.max(0.5, this.current.targetShotAfterStartDelay - 0.5);
-    this.current.targetDispersion = this.interpolateValue(this.current.targetDispersion, defaultRunSettings.targetDispersion, 200);
+    this.current.targetDispersion = Math.min(this.interpolateValue(this.current.targetDispersion, defaultRunSettings.targetDispersion, 200), 500);
   }
 
   private interpolateValue(currentValue: number, startValue: number, valueIn10thLevel: number): number {

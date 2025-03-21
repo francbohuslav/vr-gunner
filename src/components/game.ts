@@ -1,5 +1,5 @@
 import AFRAME, { Component } from "aframe";
-import runSettings from "../run-settings";
+import runSettings, { defaultRunSettings } from "../run-settings";
 import config from "../config";
 
 const targetsPerRound = 5;
@@ -19,8 +19,6 @@ interface GameComponent extends Component {
 }
 
 //TODO: BF: bonusy vybirat ACkem na VR
-//TODO: BF: konzoli zobrazovat pod bonusama 
-//TODO: BF: konzole pod bonusama bude zobrazovat uz stats pro dasli kolo
 
 AFRAME.registerComponent("game", {
   schema: {},
@@ -40,6 +38,7 @@ AFRAME.registerComponent("game", {
 
     // const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
     // bonuser.components.bonuser.chooseBonus();
+    this.drawSettings();
   },
 
   startNextLevel(this: GameComponent) {
@@ -48,7 +47,8 @@ AFRAME.registerComponent("game", {
     } else {
       runSettings.nextLevel();
     }
-    this.drawSettings();
+    document.getElementById("text-console")!.setAttribute("visible", "false");
+
     this.gameState = "running";
     this.enemiesKilled = 0;
 
@@ -66,7 +66,9 @@ AFRAME.registerComponent("game", {
       this.hideTarget();
 
       this.gameState = "chooseBonus";
+      this.drawSettings();
       this.updateUi();
+
       const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
       const bonus = await bonuser.components.bonuser.chooseBonus();
       bonus.modify();
@@ -100,16 +102,17 @@ AFRAME.registerComponent("game", {
       `Level: ${settings.level}`,
       "",
       `CIL`,
-      `Zpozdeni prvni strely: ${settings.targetShotAfterStartDelay.toFixed(2)}`,
-      `Cetnost strel: ${settings.targetShotDelay.toFixed(2)}`,
-      `Rychlost: ${(settings.targetMoveSpeed * 1000).toFixed(2)}`,
-      `Rychlost kulek: ${(settings.targetBulletSpeed * 1000).toFixed(2)}`,
-      `Presnost kulek: ${settings.targetDispersion.toFixed(0)}`,
+      `Cetnost strel: ${settings.targetShotDelay.toFixed(1)} s`,
+      `Rychlost: ${(settings.targetMoveSpeed / defaultRunSettings.targetMoveSpeed).toFixed(1)}`,
+      // To be start value 1
+      `Rychlost kulek: ${(settings.targetBulletSpeed / defaultRunSettings.targetBulletSpeed).toFixed(1)}`,
+      `Presnost kulek: ${(settings.targetDispersion / defaultRunSettings.targetDispersion).toFixed(1)}`,
       "",
       "HRAC",
-      `Rychlost kulek: ${(settings.playerBulletSpeed * 1000).toFixed(2)}`,
+      `Rychlost kulek: ${(settings.playerBulletSpeed / defaultRunSettings.playerBulletSpeed).toFixed(1)}`,
     ];
 
+    document.getElementById("text-console")!.setAttribute("visible", "true");
     document.getElementById("text-console")?.setAttribute("value", text.join("\n"));
   },
 

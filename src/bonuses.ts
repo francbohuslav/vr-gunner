@@ -1,8 +1,9 @@
-import runSettings from "./run-settings";
+import runSettings, { maxBulletSpeed } from "./run-settings";
 
 export interface IBonus {
   name: string;
   modify(): void;
+  isAvailable?(): boolean;
 }
 
 export const allBonuses: IBonus[] = [
@@ -19,13 +20,10 @@ export const allBonuses: IBonus[] = [
     },
   },
   {
-    name: "Cile po startu strileji pozdeji",
-    modify() {
-      runSettings.current.targetShotAfterStartDelay *= 2;
-    },
-  },
-  {
     name: "Cile strileji mene casto",
+    isAvailable() {
+      return runSettings.current.targetShotDelay < 10;
+    },
     modify() {
       runSettings.current.targetShotDelay *= 2;
     },
@@ -38,18 +36,27 @@ export const allBonuses: IBonus[] = [
   },
   {
     name: "Tvoje kulky jsou rychlejsi",
+    isAvailable() {
+      return runSettings.current.playerBulletSpeed < maxBulletSpeed;
+    },
     modify() {
       runSettings.current.playerBulletSpeed *= 1.5;
     },
   },
   {
     name: "Jeden zivot navic",
+    isAvailable() {
+      return runSettings.current.playerLives < 10;
+    },
     modify() {
       runSettings.current.playerLives++;
     },
   },
   {
     name: "Vice bonusu k vyberu",
+    isAvailable() {
+      return runSettings.current.bonusChoiceCount < 5;
+    },
     modify() {
       runSettings.current.bonusChoiceCount++;
     },

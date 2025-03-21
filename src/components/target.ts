@@ -4,7 +4,6 @@ const THREE = AFRAME.THREE;
 
 interface TargetComponent extends Component {
   setNewTarget(): void;
-  createFirstShotTime(): number;
   createNextShotTime(): number;
   createBullet(): void;
   // detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
@@ -67,17 +66,13 @@ AFRAME.registerComponent("target", {
     const y = Math.random() * 10 + 0.25;
     this.el.object3D.position.set(x, y, z);
     this.moveLeft = Math.random() > 0.5;
-    this.nextShotTime = this.createFirstShotTime();
+    this.nextShotTime = this.createNextShotTime();
   },
 
   targetHit(this: TargetComponent) {
     this.setNewTarget();
     const scene = document.querySelector("a-scene")!;
     scene.components.game.targetHit();
-  },
-
-  createFirstShotTime(this: TargetComponent): number {
-    return new Date().getTime() + (runSettings.current.targetShotAfterStartDelay + Math.random() * runSettings.current.targetShotAfterStartDelay) * 1000;
   },
 
   createNextShotTime(this: TargetComponent): number {

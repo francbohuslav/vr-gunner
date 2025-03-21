@@ -4,9 +4,9 @@ export default {
   debug: location.href.includes("localhost"),
   splash: false,
   isMobile: AFRAME.utils.device.isMobile(),
-  //@ts-ignore
+  //@ts-expect-error isOculusBrowser is not supported by types unfortunately
   isPC: !AFRAME.utils.device.isMobile() && !AFRAME.utils.device.isOculusBrowser(),
-  //@ts-ignore
+  //@ts-expect-error isOculusBrowser is not supported by types unfortunately
   isVR: AFRAME.utils.device.isOculusBrowser(),
 
   nextLevelSentence() {
