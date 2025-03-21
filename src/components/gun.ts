@@ -15,12 +15,18 @@ AFRAME.registerComponent("gun", {
   },
 
   init: function (this: GunComponent) {
+    const scene = document.querySelector("a-scene")!;
+
     this.el.addEventListener("abuttondown", this.startNextLevel.bind(this));
+    this.el.addEventListener("bbuttondown", () => {
+      if (scene.is("vr-mode")) {
+        scene.exitVR();
+      }
+    });
     this.el.addEventListener("triggerdown", this.createBullet.bind(this));
 
     if (config.isMobile) {
       document.body.addEventListener("mousedown", () => {
-        const scene = document.querySelector("a-scene")!;
         const game = scene.components.game;
         if (game.gameState !== "running") {
           this.startNextLevel();
@@ -48,7 +54,11 @@ AFRAME.registerComponent("gun", {
   startNextLevel() {
     const scene = document.querySelector("a-scene")!;
     const game = scene.components.game;
-    if (["killed", "beforeStart", "pauseBetweenLevels"].includes(game.gameState)) {
+    const bonuser = (document.getElementById("bonuser") as AFRAME.Entity).components.bonuser;
+
+    if (game.gameState === "chooseBonus" && bonuser.selectedBonus && bonuser.resolveSelectionPromise) {
+      bonuser.resolveSelectionPromise();
+    } else if (["killed", "beforeStart", "pauseBetweenLevels"].includes(game.gameState)) {
       game.startNextLevel();
     }
   },
@@ -56,9 +66,6 @@ AFRAME.registerComponent("gun", {
   createBullet: function (this: GunComponent) {
     try {
       const scene = document.querySelector("a-scene")!;
-      if (!scene.is("vr-mode")) {
-        // return;
-      }
 
       const position = new THREE.Vector3();
       const direction = new THREE.Quaternion();

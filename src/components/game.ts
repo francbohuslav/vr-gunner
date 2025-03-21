@@ -35,10 +35,11 @@ AFRAME.registerComponent("game", {
     document.getElementById("lives")?.setAttribute("position", `0 -${config.isVR ? 0.9 : 0.6} -2`);
 
     this.updateUi();
-
-    // const bonuser = document.getElementById("bonuser") as AFRAME.Entity;
-    // bonuser.components.bonuser.chooseBonus();
     this.drawSettings();
+
+    // To test bonuses
+    // this.enemiesKilled = targetsPerRound - 1;
+    // this.targetHit();
   },
 
   startNextLevel(this: GameComponent) {
@@ -123,10 +124,10 @@ AFRAME.registerComponent("game", {
         text = `Zemrel jsi, salate.\n${config.nextLevelSentence()} pro zacatek hry.`;
         break;
       case "chooseBonus":
-        text = `Vyber bonus.`;
+        text = `${config.nextLevelSentence()} pro volbu bonusu.`;
         break;
       case "pauseBetweenLevels":
-        text = `${config.nextLevelSentence()} pro dalsiho kolo.`;
+        text = `${config.nextLevelSentence()} pro dalsi kolo.`;
         break;
       case "beforeStart":
         text = `Musis sestrelit ${targetsPerRound} cilu.\n${config.nextLevelSentence()} pro zacatek hry.`;
