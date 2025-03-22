@@ -10,11 +10,10 @@
     <div id="react-root"></div>
     <a-scene game obb-collider="showColliders: false">
       <a-assets style="opacity: 0">
-        <img id="gun-texture" src="./assets/gun.jpg" />
         <img id="choise-texture" src="./assets/choise.jpg" />
         <img id="life-texture" src="./assets/heart.png" />
         <a-mixin id="mixin-hearth" geometry="primitive: plane" scale="0.1 0.1 0.1" material="src: #life-texture; transparent: true; shader: flat"></a-mixin>
-        <a-asset-item id="gun-model" src="./assets/gun.obj"></a-asset-item>
+        <a-asset-item id="gun-model" src="./assets/gun.glb"></a-asset-item>
         <a-asset-item id="enemy-ufo-model" src="./assets/enemy-ufo.glb"></a-asset-item>
         <audio id="gunshot-sound-preload" src="./assets/gunshot.mp3" preload="auto"></audio>
 

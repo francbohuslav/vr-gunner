@@ -70,7 +70,7 @@ AFRAME.registerComponent("bullet", {
     bullet.object3D.position.add(vector);
 
     // Draw trail from origin to bullet is smaller then maxTrailLength
-    const trailLength = Math.max(0, Math.min(this.lifeTime, 100) * this.data.speed - 0.1);
+    const trailLength = Math.max(0, Math.min(this.lifeTime, 100) * this.data.speed - 0.3);
     const trailOffset = new THREE.Vector3(0, 0, trailLength / 2);
     this.trail.object3D.position.copy(trailOffset);
     this.trail.setAttribute("depth", trailLength);
