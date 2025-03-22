@@ -32,8 +32,6 @@ AFRAME.registerComponent("game", {
       scene.setAttribute("xr-mode-ui", "enabled: false");
     }
 
-    document.getElementById("lives")?.setAttribute("position", `0 -${config.isVR ? 0.9 : 0.6} -2`);
-
     this.updateUi();
     this.drawSettings();
 
@@ -141,21 +139,8 @@ AFRAME.registerComponent("game", {
     }
     document.getElementById("text-message")?.setAttribute("value", text);
 
-    {
-      const livesCont = document.getElementById("lives") as AFRAME.Entity;
-      if (livesCont.childNodes.length != runSettings.current.playerLives) {
-        while (livesCont.firstChild) {
-          livesCont.removeChild(livesCont.firstChild);
-        }
-
-        for (let i = 1; i <= runSettings.current.playerLives; i++) {
-          const life = document.createElement("a-entity");
-          life.setAttribute("mixin", "mixin-hearth");
-          life.setAttribute("position", `${(i - (runSettings.current.playerLives + 1) / 2) * 0.12} 0 0`);
-          livesCont.appendChild(life);
-        }
-      }
-    }
+    const livesComponents = document.querySelectorAll<AFRAME.Entity>("[lives]");
+    livesComponents.forEach((liveElement) => liveElement.components.lives.updateLives());
   },
 });
 

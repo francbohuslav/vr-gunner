@@ -11,8 +11,6 @@
     <a-scene game obb-collider="showColliders: false">
       <a-assets style="opacity: 0">
         <img id="choise-texture" src="./assets/choise.jpg" />
-        <img id="life-texture" src="./assets/heart.png" />
-        <a-mixin id="mixin-hearth" geometry="primitive: plane" scale="0.1 0.1 0.1" material="src: #life-texture; transparent: true; shader: flat"></a-mixin>
         <a-asset-item id="gun-model" src="./assets/gun.glb"></a-asset-item>
         <a-asset-item id="enemy-ufo-model" src="./assets/enemy-ufo.glb"></a-asset-item>
         <audio id="gunshot-sound-preload" src="./assets/gunshot.mp3" preload="auto"></audio>
@@ -22,7 +20,7 @@
 
       <!-- none, default, contact, egypt, checkerboard, forest, goaland, yavapai, goldmine, 
        threetowers, poison, arches, tron, japan, dream, volcano, starry, osiris, moon -->
-      <a-entity environment="preset: egypt; lightPosition: -10 10 10; "></a-entity>
+      <a-entity environment="preset: arches; lightPosition: -10 10 10; "></a-entity>
 
       <!-- Camera + controllers rig -->
       <a-entity id="camera-rig">
@@ -31,9 +29,11 @@
           <a-text id="text-message" position="0 0.3 -2" value="" align="center" color="#000" scale="0.3 0.3 0.3"></a-text>
           <a-text id="text-console" position="0.3 -0.45 -2" value="" align="left" color="#000" scale="0.15 0.15 0.15"></a-text>
           <a-ring id="crosshair" position="0 0 -1.5" visible="false" radius-outer="0.02" radius-inner="0.015" color="#FF0" material="shader: flat"></a-ring>
-          <a-entity id="lives"></a-entity>
           <a-entity guns="vr: false"></a-entity>
         </a-camera>
+        <!-- <a-entity position="0 1.6 0">
+          <a-entity guns="vr: false"></a-entity>
+        </a-entity> -->
       </a-entity>
       <a-entity guns="vr: true"></a-entity>
       <a-entity id="bonuser" bonuser position="0 1.6 -2.1"></a-entity>

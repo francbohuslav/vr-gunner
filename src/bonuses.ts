@@ -46,7 +46,7 @@ export const allBonuses: IBonus[] = [
   {
     name: "Jeden zivot navic",
     isAvailable() {
-      return runSettings.current.playerLives < 10;
+      return runSettings.current.playerLives < 6;
     },
     modify() {
       runSettings.current.playerLives++;
