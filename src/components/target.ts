@@ -12,7 +12,8 @@ interface TargetComponent extends Component {
 
   moveLeft: boolean;
   nextShotTime: number;
-  gunshotSoundPreload: HTMLAudioElement;
+  prevTime: number;
+  loadingSound: AFRAME.Entity;
   // box: AFRAME.THREE.Vector3;
 }
 
@@ -23,6 +24,12 @@ AFRAME.registerComponent("target", {
     this.el.setAttribute("id", "target");
     this.el.setAttribute("obb-collider", "centerModel: true");
     this.el.setAttribute("mixin", "mixin-target");
+    this.el.setAttribute("sound", "src: #gunshot-sound-preload; volume: 1;");
+
+    this.loadingSound = document.createElement("a-entity");
+    this.loadingSound.setAttribute("sound", "src: #loading-sound; volume: 2;");
+    this.el.appendChild(this.loadingSound);
+
     // this.box = new THREE.Vector3();
 
     // this.el.addEventListener("object3dset", () => {
@@ -30,7 +37,6 @@ AFRAME.registerComponent("target", {
     // });
 
     this.setNewTarget();
-    this.gunshotSoundPreload = document.getElementById("gunshot-sound-preload") as HTMLAudioElement;
   },
 
   tick(this: TargetComponent, _time, timeDelta) {
@@ -53,18 +59,28 @@ AFRAME.registerComponent("target", {
       this.el.object3D.quaternion.slerp(targetRotation, 0.01);
     }
 
-    // Shot towards player
-    if (new Date().getTime() > this.nextShotTime) {
+    const now = new Date().getTime();
+    const loadStartTime = this.nextShotTime - 700;
+
+    if (this.prevTime < loadStartTime && loadStartTime <= now) {
+      this.loadingSound.components.sound.playSound();
+    }
+    if (now > this.nextShotTime) {
+      // Shot towards player
       this.createBullet();
       this.nextShotTime = this.createNextShotTime();
     }
+    this.prevTime = now;
   },
 
   setNewTarget(this: TargetComponent) {
-    const z = -(Math.random() * 15 + 5);
-    const x = (Math.random() * 15 + 5) * (Math.random() > 0.5 ? 1 : -1);
-    const y = Math.random() * 10 + 0.25;
-    this.el.object3D.position.set(x, y, z);
+    const randomHorizontalRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * (Math.random() - 0.5));
+    const randomVerticalRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), (Math.PI * Math.random() * 0.25) / 4);
+    const distance = new THREE.Vector3(0, 0, -runSettings.current.targetDistance).applyQuaternion(randomHorizontalRotation.multiply(randomVerticalRotation));
+    // To be sure that we are above ground
+    distance.add(new THREE.Vector3(0, 1, 0));
+
+    this.el.object3D.position.copy(distance);
     this.moveLeft = Math.random() > 0.5;
     this.nextShotTime = this.createNextShotTime();
   },
@@ -97,15 +113,7 @@ AFRAME.registerComponent("target", {
       bullet.setAttribute("bullet", { direction, speed: runSettings.current.targetBulletSpeed, color: "#FF0000", size: 0.06 });
       bullet.setAttribute("position", position);
 
-      const shotSound = document.createElement("audio");
-      shotSound.src = this.gunshotSoundPreload.src;
-      shotSound.volume = 0.1;
-      shotSound.load();
-
-      shotSound.addEventListener("ended", function () {
-        shotSound.remove();
-      });
-      shotSound.play();
+      this.el.components.sound.playSound();
 
       scene.appendChild(bullet);
     } catch (ex) {

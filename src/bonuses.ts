@@ -14,6 +14,12 @@ export const allBonuses: IBonus[] = [
     },
   },
   {
+    name: "Cile jsou bliz k tobe",
+    modify() {
+      runSettings.current.targetDistance /= 1.5;
+    },
+  },
+  {
     name: "Kulky cile jsou pomalejsi",
     modify() {
       runSettings.current.targetBulletSpeed /= 1.5;

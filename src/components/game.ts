@@ -18,8 +18,6 @@ interface GameComponent extends Component {
   drawSettings(): void;
 }
 
-//TODO: BF: bonusy vybirat ACkem na VR
-
 AFRAME.registerComponent("game", {
   schema: {},
 
@@ -106,6 +104,7 @@ AFRAME.registerComponent("game", {
       // To be start value 1
       `Rychlost kulek: ${(settings.targetBulletSpeed / defaultRunSettings.targetBulletSpeed).toFixed(1)}`,
       `Presnost kulek: ${(settings.targetDispersion / defaultRunSettings.targetDispersion).toFixed(1)}`,
+      `Vzdalenost: ${settings.targetDistance.toFixed(1)}`,
       "",
       "HRAC",
       `Rychlost kulek: ${(settings.playerBulletSpeed / defaultRunSettings.playerBulletSpeed).toFixed(1)}`,

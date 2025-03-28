@@ -27,7 +27,8 @@ AFRAME.registerComponent("bullet", {
   init: function (this: BulletComponent) {
     this.bulletId = ++bulletCounter;
     this.el.setAttribute("gltf-model", `#bullet-model`);
-    this.el.setAttribute("scale", `0.0004 0.0004 0.0004`);
+    const bSize = 0.04 * this.data.size;
+    this.el.setAttribute("scale", `${bSize} ${bSize} ${bSize}`);
 
     this.el.object3D.setRotationFromQuaternion(this.data.direction);
 
