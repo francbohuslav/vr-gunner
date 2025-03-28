@@ -2,6 +2,11 @@ import AFRAME, { Component } from "aframe";
 import runSettings from "../run-settings";
 const THREE = AFRAME.THREE;
 
+const bulletOffsetMap: Record<string, AFRAME.THREE.Vector3> = {
+  "mixin-target-ufo": new THREE.Vector3(0, 0, 0),
+  "mixin-target-mimon": new THREE.Vector3(0, -1, 0),
+};
+
 interface TargetComponent extends Component {
   setNewTarget(): void;
   createNextShotTime(): number;
@@ -10,6 +15,7 @@ interface TargetComponent extends Component {
   getBulletPosAndRotToPlayer(): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion];
   targetHit(): void;
 
+  mixin: string;
   moveLeft: boolean;
   nextShotTime: number;
   prevTime: number;
@@ -23,7 +29,6 @@ AFRAME.registerComponent("target", {
   init: function (this: TargetComponent) {
     this.el.setAttribute("id", "target");
     this.el.setAttribute("obb-collider", "centerModel: true");
-    this.el.setAttribute("mixin", "mixin-target");
     this.el.setAttribute("sound", "src: #gunshot-sound-preload; volume: 1;");
 
     this.loadingSound = document.createElement("a-entity");
@@ -80,6 +85,9 @@ AFRAME.registerComponent("target", {
     // To be sure that we are above ground
     distance.add(new THREE.Vector3(0, 1, 0));
 
+    this.mixin = Math.random() > 0.5 ? "mixin-target-mimon" : "mixin-target-ufo";
+    this.el.setAttribute("mixin", this.mixin);
+
     this.el.object3D.position.copy(distance);
     this.moveLeft = Math.random() > 0.5;
     this.nextShotTime = this.createNextShotTime();
@@ -126,11 +134,12 @@ AFRAME.registerComponent("target", {
   getBulletPosAndRotToPlayer(this: TargetComponent): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion] {
     const camera = document.getElementById("camera") as AFRAME.Entity;
 
+    const bulletStart = this.el.object3D.position.clone().add(bulletOffsetMap[this.mixin]);
     const offsetTowardsPlayer = new THREE.Vector3();
-    offsetTowardsPlayer.copy(this.el.object3D.position).sub(camera?.object3D.position).negate().setLength(0.1);
+    offsetTowardsPlayer.copy(bulletStart).sub(camera?.object3D.position).negate().setLength(0.1);
 
     const bulletPosition = new THREE.Vector3();
-    bulletPosition.copy(this.el.object3D.position);
+    bulletPosition.copy(bulletStart);
     bulletPosition.add(offsetTowardsPlayer);
 
     const directionAroundY = new THREE.Vector3(offsetTowardsPlayer.x, 0, offsetTowardsPlayer.z).normalize();

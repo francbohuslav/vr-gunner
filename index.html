@@ -14,15 +14,17 @@
         <a-asset-item id="gun-model" src="./assets/gun.glb"></a-asset-item>
         <a-asset-item id="bullet-model" src="./assets/bullet.glb"></a-asset-item>
         <a-asset-item id="enemy-ufo-model" src="./assets/enemy-ufo.glb"></a-asset-item>
+        <a-asset-item id="enemy-mimon-model" src="./assets/enemy-mimon.glb"></a-asset-item>
         <audio id="gunshot-sound-preload" src="./assets/gunshot.mp3" preload="auto"></audio>
         <audio id="loading-sound" src="./assets/loading.mp3" preload="auto"></audio>
 
-        <a-mixin id="mixin-target" gltf-model="#enemy-ufo-model" scale="0.05 0.05 0.05"></a-mixin>
+        <a-mixin id="mixin-target-ufo" gltf-model="#enemy-ufo-model" scale="0.05 0.05 0.05"></a-mixin>
+        <a-mixin id="mixin-target-mimon" gltf-model="#enemy-mimon-model" scale="0.03 0.03 0.03"></a-mixin>
       </a-assets>
 
       <!-- none, default, contact, egypt, checkerboard, forest, goaland, yavapai, goldmine, 
        threetowers, poison, arches, tron, japan, dream, volcano, starry, osiris, moon -->
-      <a-entity environment="preset: forest; lightPosition: -10 10 10"></a-entity>
+      <a-entity environment="preset: contact; lightPosition: -10 10 10"></a-entity>
 
       <!-- Camera + controllers rig -->
       <a-entity id="camera-rig">
