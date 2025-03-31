@@ -11,21 +11,21 @@ export default {
 
   nextLevelSentence() {
     if (this.isMobile) {
-      return "Tukni na obrazovku";
+      return "Ťukni na obrazovku";
     } else if (this.isVR) {
-      return "Zmackni (A)";
+      return "Zmáčkni (A)";
     } else {
-      return "Zmackni Enter";
+      return "Zmáčkni Enter";
     }
   },
 
   shotSentence() {
     if (this.isMobile) {
-      return "tukanim na obrazovku";
+      return "ťukáním na obrazovku";
     } else if (this.isVR) {
-      return "ovladacem";
+      return "ovladačem";
     } else {
-      return "mezernikem";
+      return "mezerníkem";
     }
   },
 };

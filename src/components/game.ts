@@ -98,15 +98,15 @@ AFRAME.registerComponent("game", {
     const text = [
       `Level: ${settings.level}`,
       "",
-      `CIL`,
-      `Cetnost strel: ${settings.targetShotDelay.toFixed(1)} s`,
+      `CÍL`,
+      `Četnost střel: ${settings.targetShotDelay.toFixed(1)} s`,
       `Rychlost: ${(settings.targetMoveSpeed / defaultRunSettings.targetMoveSpeed).toFixed(1)}`,
       // To be start value 1
       `Rychlost kulek: ${(settings.targetBulletSpeed / defaultRunSettings.targetBulletSpeed).toFixed(1)}`,
-      `Presnost kulek: ${(settings.targetDispersion / defaultRunSettings.targetDispersion).toFixed(1)}`,
-      `Vzdalenost: ${settings.targetDistance.toFixed(1)}`,
+      `Přesnost kulek: ${(settings.targetDispersion / defaultRunSettings.targetDispersion).toFixed(1)}`,
+      `Vzdálenost: ${settings.targetDistance.toFixed(1)}`,
       "",
-      "HRAC",
+      "HRÁČ",
       `Rychlost kulek: ${(settings.playerBulletSpeed / defaultRunSettings.playerBulletSpeed).toFixed(1)}`,
     ];
 
@@ -118,20 +118,20 @@ AFRAME.registerComponent("game", {
     let text = "";
     switch (this.gameState) {
       case "killed":
-        text = `Zemrel jsi, salate.\n${config.nextLevelSentence()} pro zacatek hry.`;
+        text = `Zemřel jsi, saláte.\n${config.nextLevelSentence()} pro začátek hry.`;
         break;
       case "chooseBonus":
         text = `${config.nextLevelSentence()} pro volbu bonusu.`;
         break;
       case "pauseBetweenLevels":
-        text = `${config.nextLevelSentence()} pro dalsi kolo.`;
+        text = `${config.nextLevelSentence()} pro další kolo.`;
         break;
       case "beforeStart":
-        text = `Musis sestrelit ${targetsPerRound} cilu.\n${config.nextLevelSentence()} pro zacatek hry.`;
+        text = `Musíš sestřelit ${targetsPerRound} cílů.\n${config.nextLevelSentence()} pro začátek hry.`;
         break;
       default:
         if (this.enemiesKilled === 0) {
-          text = `Hrajes, strilej ${config.shotSentence()}!!!`;
+          text = `Hraješ, střílej ${config.shotSentence()}!!!`;
         } else {
           text = `${this.enemiesKilled}/${targetsPerRound}`;
         }

@@ -74,6 +74,8 @@ AFRAME.registerComponent("bonuser", {
         textShadow.setAttribute("color", "black");
         textShadow.setAttribute("value", bonus.name);
         textShadow.setAttribute("position", "0.002 -0.002 0");
+        textShadow.setAttribute("mixin", "mixin-font");
+        textShadow.setAttribute("negate", "false");
         plane.appendChild(textShadow);
 
         const text = document.createElement("a-text");
@@ -83,6 +85,8 @@ AFRAME.registerComponent("bonuser", {
         text.setAttribute("wrap-count", "20");
         text.setAttribute("color", "white");
         text.setAttribute("value", bonus.name);
+        text.setAttribute("mixin", "mixin-font");
+        text.setAttribute("negate", "false");
         plane.appendChild(text);
 
         this.el.appendChild(plane);

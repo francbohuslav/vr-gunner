@@ -8,25 +8,25 @@ export interface IBonus {
 
 export const allBonuses: IBonus[] = [
   {
-    name: "Cile jsou pomalejsi",
+    name: "Cíle jsou pomalejší",
     modify() {
       runSettings.current.targetMoveSpeed /= 1.5;
     },
   },
   {
-    name: "Cile jsou bliz k tobe",
+    name: "Cíle jsou blíž k tobě",
     modify() {
       runSettings.current.targetDistance /= 1.5;
     },
   },
   {
-    name: "Kulky cile jsou pomalejsi",
+    name: "Kulky cíle jsou pomalejší",
     modify() {
       runSettings.current.targetBulletSpeed /= 1.5;
     },
   },
   {
-    name: "Cile strileji mene casto",
+    name: "Cíle střílejí mene casto",
     isAvailable() {
       return runSettings.current.targetShotDelay < 10;
     },
@@ -35,13 +35,13 @@ export const allBonuses: IBonus[] = [
     },
   },
   {
-    name: "Cile neumi mirit",
+    name: "Cíle neumí mířit",
     modify() {
       runSettings.current.targetDispersion /= 1.5;
     },
   },
   {
-    name: "Tvoje kulky jsou rychlejsi",
+    name: "Tvoje kulky jsou rychlejší",
     isAvailable() {
       return runSettings.current.playerBulletSpeed < maxBulletSpeed;
     },
@@ -50,7 +50,7 @@ export const allBonuses: IBonus[] = [
     },
   },
   {
-    name: "Jeden zivot navic",
+    name: "Jeden život navíc",
     isAvailable() {
       return runSettings.current.playerLives < 6;
     },
@@ -59,7 +59,7 @@ export const allBonuses: IBonus[] = [
     },
   },
   {
-    name: "Vice bonusu k vyberu",
+    name: "Více bonusů k výběru",
     isAvailable() {
       return runSettings.current.bonusChoiceCount < 5;
     },
