@@ -1,23 +1,27 @@
 export interface IRunSettings {
   level: number;
+  targetHealth: number;
   targetMoveSpeed: number;
   targetBulletSpeed: number;
   targetShotDelay: number;
   targetDispersion: number;
   targetDistance: number;
   playerBulletSpeed: number;
+  playerBulletStrength: number;
   playerLives: number;
   bonusChoiceCount: number;
 }
 
 export const defaultRunSettings: IRunSettings = {
   level: 1,
+  targetHealth: 0.5,
   targetMoveSpeed: 0.0002,
   targetBulletSpeed: 0.003,
   targetShotDelay: 5,
   targetDispersion: 25,
   targetDistance: 25,
   playerBulletSpeed: 0.005,
+  playerBulletStrength: 1,
   playerLives: 3,
   bonusChoiceCount: 3,
 };
@@ -41,6 +45,7 @@ class RunSettings {
     );
     this.current.targetShotDelay = Math.max(1, this.current.targetShotDelay - 0.4);
     this.current.targetDispersion = Math.min(this.interpolateValue(this.current.targetDispersion, defaultRunSettings.targetDispersion, 200), 500);
+    this.current.targetHealth = this.interpolateValue(this.current.targetHealth, defaultRunSettings.targetHealth, 3);
   }
 
   private interpolateValue(currentValue: number, startValue: number, valueIn10thLevel: number): number {

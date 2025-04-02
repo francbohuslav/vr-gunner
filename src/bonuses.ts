@@ -67,4 +67,10 @@ export const allBonuses: IBonus[] = [
       runSettings.current.bonusChoiceCount++;
     },
   },
+  {
+    name: "Silnější střely",
+    modify() {
+      runSettings.current.playerBulletStrength *= 1.5;
+    },
+  },
 ];

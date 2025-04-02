@@ -2,6 +2,8 @@ import AFRAME from "aframe";
 
 export default {
   debug: location.href.includes("localhost"),
+  debug_showBonusOnStart: false,
+  debug_showStaticEnemy: false,
   splash: false,
   isMobile: AFRAME.utils.device.isMobile(),
   //@ts-expect-error isOculusBrowser is not supported by types unfortunately

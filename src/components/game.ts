@@ -11,7 +11,7 @@ interface GameComponent extends Component {
 
   startNextLevel(): string;
   hideTarget(): void;
-  targetHit(): Promise<void>;
+  targetKilled(): Promise<void>;
   playerHit(): void;
   updateUi(): void;
   updateLives(): void;
@@ -33,9 +33,14 @@ AFRAME.registerComponent("game", {
     this.updateUi();
     this.drawSettings();
 
-    // To test bonuses
-    // this.enemiesKilled = targetsPerRound - 1;
-    // this.targetHit();
+    if (config.debug_showBonusOnStart) {
+      // To test bonuses
+      this.enemiesKilled = targetsPerRound - 1;
+      this.targetKilled();
+    }
+    if (config.debug_showStaticEnemy) {
+      this.startNextLevel();
+    }
   },
 
   startNextLevel(this: GameComponent) {
@@ -55,7 +60,7 @@ AFRAME.registerComponent("game", {
     this.updateUi();
   },
 
-  async targetHit(this: GameComponent) {
+  async targetKilled(this: GameComponent) {
     this.enemiesKilled++;
     if (this.enemiesKilled === targetsPerRound) {
       this.hideTarget();
@@ -99,6 +104,7 @@ AFRAME.registerComponent("game", {
       `Level: ${settings.level}`,
       "",
       `CÍL`,
+      `Život: ${settings.targetHealth.toFixed(1)}`,
       `Četnost střel: ${settings.targetShotDelay.toFixed(1)} s`,
       `Rychlost: ${(settings.targetMoveSpeed / defaultRunSettings.targetMoveSpeed).toFixed(1)}`,
       // To be start value 1
@@ -108,6 +114,7 @@ AFRAME.registerComponent("game", {
       "",
       "HRÁČ",
       `Rychlost kulek: ${(settings.playerBulletSpeed / defaultRunSettings.playerBulletSpeed).toFixed(1)}`,
+      `Síla kulek: ${settings.playerBulletStrength.toFixed(1)}`,
     ];
 
     document.getElementById("text-console")!.setAttribute("visible", "true");

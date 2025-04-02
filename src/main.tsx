@@ -9,6 +9,7 @@ import "./components/game.ts";
 import "./components/bonuser.ts";
 import "./components/guns.ts";
 import "./components/lives.ts";
+import "./components/health-bar.ts";
 import { App } from "./app.tsx";
 import "./index.css";
 import AFRAME from "aframe";

@@ -104,8 +104,9 @@ AFRAME.registerComponent("bullet", {
 
   processCollision(e: CustomEvent<{ withEl: AFRAME.Entity }>) {
     const entity = e.detail.withEl;
-    if (entity.id === "target" && this.data.fromPlayer) {
-      e.detail.withEl.components.target.targetHit();
+    if (entity.id === "targetBody" && this.data.fromPlayer) {
+      this.removeBullet();
+      (document.getElementById("target") as AFRAME.Entity).components.target.targetHit();
     }
   },
 

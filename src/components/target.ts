@@ -1,10 +1,11 @@
 import AFRAME, { Component } from "aframe";
 import runSettings from "../run-settings";
+import config from "../config";
 const THREE = AFRAME.THREE;
 
-const bulletOffsetMap: Record<string, AFRAME.THREE.Vector3> = {
-  "mixin-target-ufo": new THREE.Vector3(0, 0, 0),
-  "mixin-target-mimon": new THREE.Vector3(0, -1, 0),
+const targetSettings: Record<string, { bulletOffset: AFRAME.THREE.Vector3; healthBarYOffset: number; offsetFromGround: number }> = {
+  "mixin-target-ufo": { bulletOffset: new THREE.Vector3(0, 0, 0), healthBarYOffset: 1, offsetFromGround: 1 },
+  "mixin-target-mimon": { bulletOffset: new THREE.Vector3(0, -1, 0), healthBarYOffset: 2.2, offsetFromGround: 2 },
 };
 
 interface TargetComponent extends Component {
@@ -14,8 +15,13 @@ interface TargetComponent extends Component {
   // detectImpact(bulletPrevPosition: AFRAME.THREE.Vector3, bulletPosition: AFRAME.THREE.Vector3): void;
   getBulletPosAndRotToPlayer(): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion];
   targetHit(): void;
+  updateHealthBar(): void;
 
   mixin: string;
+  modelEntity: AFRAME.Entity;
+  health: number;
+  maxHealth: number;
+  healthBar: AFRAME.Entity;
   moveLeft: boolean;
   nextShotTime: number;
   prevTime: number;
@@ -28,8 +34,16 @@ AFRAME.registerComponent("target", {
 
   init: function (this: TargetComponent) {
     this.el.setAttribute("id", "target");
-    this.el.setAttribute("obb-collider", "centerModel: true");
     this.el.setAttribute("sound", "src: #gunshot-sound-preload; volume: 1;");
+
+    this.modelEntity = document.createElement("a-entity");
+    this.modelEntity.setAttribute("id", "targetBody");
+    this.modelEntity.setAttribute("obb-collider", "centerModel: true");
+    this.el.appendChild(this.modelEntity);
+
+    this.healthBar = document.createElement("a-entity");
+    this.healthBar.setAttribute("health-bar", "percents: 100");
+    this.el.appendChild(this.healthBar);
 
     this.loadingSound = document.createElement("a-entity");
     this.loadingSound.setAttribute("sound", "src: #loading-sound; volume: 2;");
@@ -45,7 +59,7 @@ AFRAME.registerComponent("target", {
   },
 
   tick(this: TargetComponent, _time, timeDelta) {
-    {
+    if (!config.debug_showStaticEnemy) {
       // Move around player, preserve distance from ground
       const pos = this.el.object3D.position;
       const vector = new THREE.Vector3(pos.x, 0, pos.z);
@@ -79,24 +93,43 @@ AFRAME.registerComponent("target", {
   },
 
   setNewTarget(this: TargetComponent) {
-    const randomHorizontalRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * (Math.random() - 0.5));
-    const randomVerticalRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), (Math.PI * Math.random() * 0.25) / 4);
-    const distance = new THREE.Vector3(0, 0, -runSettings.current.targetDistance).applyQuaternion(randomHorizontalRotation.multiply(randomVerticalRotation));
-    // To be sure that we are above ground
-    distance.add(new THREE.Vector3(0, 1, 0));
+    this.maxHealth = runSettings.current.targetHealth;
+    this.health = this.maxHealth;
+    this.updateHealthBar();
 
     this.mixin = Math.random() > 0.5 ? "mixin-target-mimon" : "mixin-target-ufo";
-    this.el.setAttribute("mixin", this.mixin);
+    this.modelEntity.setAttribute("mixin", this.mixin);
+    this.healthBar.object3D.position.y = targetSettings[this.mixin].healthBarYOffset || 0;
 
-    this.el.object3D.position.copy(distance);
-    this.moveLeft = Math.random() > 0.5;
-    this.nextShotTime = this.createNextShotTime();
+    if (config.debug_showStaticEnemy) {
+      this.el.object3D.position.copy(new THREE.Vector3(0, 3, -10));
+      this.nextShotTime = new Date(2100, 0, 1).getTime();
+    } else {
+      const randomHorizontalRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI * (Math.random() - 0.5));
+      const randomVerticalRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), (Math.PI * Math.random() * 0.25) / 4);
+      const distance = new THREE.Vector3(0, 0, -runSettings.current.targetDistance).applyQuaternion(randomHorizontalRotation.multiply(randomVerticalRotation));
+      // To be sure that we are above ground
+      distance.add(new THREE.Vector3(0, targetSettings[this.mixin].offsetFromGround, 0));
+
+      this.el.object3D.position.copy(distance);
+      this.moveLeft = Math.random() > 0.5;
+      this.nextShotTime = this.createNextShotTime();
+    }
   },
 
   targetHit(this: TargetComponent) {
-    this.setNewTarget();
-    const scene = document.querySelector("a-scene")!;
-    scene.components.game.targetHit();
+    this.health -= runSettings.current.playerBulletStrength;
+    if (this.health <= 0) {
+      this.setNewTarget();
+      const scene = document.querySelector("a-scene")!;
+      scene.components.game.targetKilled();
+    } else {
+      this.updateHealthBar();
+    }
+  },
+
+  updateHealthBar(this: TargetComponent) {
+    this.healthBar.setAttribute("health-bar", { percents: (this.health / this.maxHealth) * 100 });
   },
 
   createNextShotTime(this: TargetComponent): number {
@@ -134,7 +167,7 @@ AFRAME.registerComponent("target", {
   getBulletPosAndRotToPlayer(this: TargetComponent): [AFRAME.THREE.Vector3, AFRAME.THREE.Quaternion] {
     const camera = document.getElementById("camera") as AFRAME.Entity;
 
-    const bulletStart = this.el.object3D.position.clone().add(bulletOffsetMap[this.mixin]);
+    const bulletStart = this.el.object3D.position.clone().add(targetSettings[this.mixin].bulletOffset);
     const offsetTowardsPlayer = new THREE.Vector3();
     offsetTowardsPlayer.copy(bulletStart).sub(camera?.object3D.position).negate().setLength(0.1);
 
