@@ -22,6 +22,7 @@ AFRAME.registerComponent("health-bar", {
 
   update: function (this: HealthBarComponent) {
     this.healthEntity.setAttribute("scale", (this.data.percents / 100).toFixed(2) + " 1 1");
+    this.el.setAttribute("visible", this.data.percents !== 100 ? "true" : "false");
   },
 });
 
