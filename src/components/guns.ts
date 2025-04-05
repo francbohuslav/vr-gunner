@@ -51,6 +51,7 @@ AFRAME.registerComponent("guns", {
                       <a-entity scale="100 100 100" position="2.7 3.5 0" rotation="-5.883 90 0" lives></a-entity>
                     </a-entity>
                   </a-entity>
+                  <a-plane src="#help-texture" width="1.143" height="0.730" scale="0.1 0.1 0.1" rotation="0 90 0" position="0 -0.085 0.058" material="transparent: true; side: double"></a-plane>
                 </a-entity>
               </a-entity>
             </a-entity>

@@ -11,6 +11,7 @@
     <a-scene game obb-collider="showColliders: false">
       <a-assets style="opacity: 0">
         <img id="choise-texture" src="./assets/choise.jpg" />
+        <img id="help-texture" src="./assets/help.png" />
         <a-asset-item id="gun-model" src="./assets/gun.glb"></a-asset-item>
         <a-asset-item id="bullet-model" src="./assets/bullet.glb"></a-asset-item>
         <a-asset-item id="enemy-ufo-model" src="./assets/enemy-ufo.glb"></a-asset-item>
@@ -47,7 +48,7 @@
           <a-ring id="crosshair" position="0 0 -1.5" visible="false" radius-outer="0.02" radius-inner="0.015" color="#FF0" material="shader: flat"></a-ring>
           <a-entity guns="vr: false"></a-entity>
         </a-camera>
-        <!-- <a-entity position="0 1.6 0">
+        <!-- <a-entity position="-0.5 1.6 -0.5" rotation="0 -90 0">
           <a-entity guns="vr: false"></a-entity>
         </a-entity> -->
       </a-entity>
